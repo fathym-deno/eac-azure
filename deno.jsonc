@@ -2,7 +2,8 @@
   "name": "@fathym/eac-azure",
   "version": "0.0.0",
   "exports": {
-    ".": "./src/azure/.exports.ts"
+    ".": "./src/azure/.exports.ts",
+    "./utils": "./src/utils/.exports.ts"
   },
   "tasks": {
     "build": "deno task build:fmt && deno task build:lint && deno task publish:check && deno task test",
