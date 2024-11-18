@@ -20,4 +20,5 @@ export * from "./EaCOverhaulAsCode.ts";
 export * from "./EaCOverhaulDetails.ts";
 export * from "./EaCSecretAsCode.ts";
 export * from "./EaCSecretDetails.ts";
+export * from "./EaCServiceDefinitions.ts";
 export * from "./EverythingAsCodeClouds.ts";
