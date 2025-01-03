@@ -111,7 +111,7 @@ export default class EaCAzureStewardPluginPlugin implements EaCRuntimePlugin {
               } as EaCLocalDistributedFileSystemDetails)
               : ({
                 Type: "JSR",
-                Package: "@fathym/eac-licensing",
+                Package: "@fathym/eac-azure",
                 Version: "",
                 FileRoot: "/src/steward/api/eac/",
                 DefaultFile: "index.ts",
