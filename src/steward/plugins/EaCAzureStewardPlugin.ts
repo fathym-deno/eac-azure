@@ -97,7 +97,7 @@ export default class EaCAzureStewardPluginPlugin implements EaCRuntimePlugin {
           } as EaCApplicationAsCode,
         },
         DFSs: {
-          dfsLookup: {
+          [dfsLookup]: {
             Details: this.options?.DFS?.Details ??
                 stewardApiMetaPath.startsWith(fileScheme)
               ? ({
