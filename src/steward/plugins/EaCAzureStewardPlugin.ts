@@ -40,91 +40,110 @@ export type EaCAzureStewardPluginOptions = {
   };
 };
 
-export default class EaCAzureStewardPluginPlugin implements EaCRuntimePlugin {
+export default class EaCAzureStewardPlugin implements EaCRuntimePlugin {
   constructor(protected options?: EaCAzureStewardPluginOptions) {}
 
   public Setup(_config: EaCRuntimeConfig): Promise<EaCRuntimePluginConfig> {
-    const stewardApiMetaPath = import.meta.resolve("../steward/api/eac");
-
-    const fileScheme = "file:///";
-
-    const projLookup = this.options?.Project?.Lookup ?? "core";
-
-    const appLookup = this.options?.Application?.Lookup ?? "steward-azure";
-
-    const dfsLookup = this.options?.DFS?.Lookup ?? "steward:api/eac/azure";
-
-    const jwtValidationLookup = this.options?.Application?.JWTValidationModifier
-      ?.Lookup;
+    const stewardApiMetaPath = import.meta.resolve("../steward/api");
 
     const pluginConfig: EaCRuntimePluginConfig<
       EverythingAsCode & EverythingAsCodeApplications & EverythingAsCodeDenoKV
-    > = {
-      Name: EaCAzureStewardPluginPlugin.name,
-      IoC: new IoCContainer(),
-      EaC: {
-        Projects: {
-          [projLookup]: {
-            ApplicationResolvers: {
-              [appLookup]: {
-                PathPattern: this.options?.Application?.Path ??
-                  "/api/steward/azure*",
-                Priority: this.options?.Application?.Priority ?? 700,
-              },
-            },
-          } as EaCProjectAsCode,
-        },
-        Applications: {
-          [appLookup]: {
-            Details: {
-              Name: "Steward Licensing API Endpoints",
-              Description: "The Steward Licensing API endpoints to use.",
-            },
-            ModifierResolvers: {
-              ...(jwtValidationLookup
-                ? {
-                  [jwtValidationLookup]: {
-                    Priority: this.options!.Application!.JWTValidationModifier!
-                      .Priority ?? 900,
-                  },
-                }
-                : {}),
-            },
-            Processor: {
-              Type: "API",
-              DFSLookup: dfsLookup,
-            } as EaCAPIProcessor,
-          } as EaCApplicationAsCode,
-        },
-        DFSs: {
-          [dfsLookup]: {
-            Details: this.options?.DFS?.Details ??
-                stewardApiMetaPath.startsWith(fileScheme)
-              ? ({
-                Type: "Local",
-                FileRoot: stewardApiMetaPath.slice(fileScheme.length),
-                DefaultFile: "index.ts",
-                Extensions: ["ts"],
-                WorkerPath: import.meta.resolve(
-                  "@fathym/eac-dfs/workers/local",
-                ),
-              } as EaCLocalDistributedFileSystemDetails)
-              : ({
-                Type: "JSR",
-                Package: "@fathym/eac-azure",
-                Version: "",
-                FileRoot: "/src/steward/api/eac/",
-                DefaultFile: "index.ts",
-                Extensions: ["ts"],
-                WorkerPath: import.meta.resolve(
-                  "@fathym/eac-dfs/workers/jsr",
-                ),
-              } as EaCJSRDistributedFileSystemDetails),
-          },
-        },
-      },
-    };
+    > = buildStewardApiPluginConfig(
+      stewardApiMetaPath,
+      "core",
+      "steward-azure",
+      "fathym:eac-azure/steward/api",
+      "/api/steward/azure*",
+      this.options,
+    );
 
     return Promise.resolve(pluginConfig);
   }
+}
+
+export function buildStewardApiPluginConfig(
+  stewardApiMetaPath: string,
+  defaultProjLookup: string,
+  defaultAppLookup: string,
+  defaultDFSLookup: string,
+  defaultAppPath: string,
+  options?: EaCAzureStewardPluginOptions,
+): EaCRuntimePluginConfig<
+  EverythingAsCode & EverythingAsCodeApplications & EverythingAsCodeDenoKV
+> {
+  const fileScheme = "file:///";
+
+  const projLookup = options?.Project?.Lookup ?? defaultProjLookup;
+
+  const appLookup = options?.Application?.Lookup ?? defaultAppLookup;
+
+  const dfsLookup = options?.DFS?.Lookup ?? defaultDFSLookup;
+
+  const jwtValidationLookup = options?.Application?.JWTValidationModifier
+    ?.Lookup;
+
+  return {
+    Name: EaCAzureStewardPlugin.name,
+    IoC: new IoCContainer(),
+    EaC: {
+      Projects: {
+        [projLookup]: {
+          ApplicationResolvers: {
+            [appLookup]: {
+              PathPattern: options?.Application?.Path ?? defaultAppPath,
+              Priority: options?.Application?.Priority ?? 700,
+            },
+          },
+        } as EaCProjectAsCode,
+      },
+      Applications: {
+        [appLookup]: {
+          Details: {
+            Name: "Steward API Endpoints",
+            Description: "The Steward API endpoints to use.",
+          },
+          ModifierResolvers: {
+            ...(jwtValidationLookup
+              ? {
+                [jwtValidationLookup]: {
+                  Priority: options!.Application!.JWTValidationModifier!
+                    .Priority ?? 900,
+                },
+              }
+              : {}),
+          },
+          Processor: {
+            Type: "API",
+            DFSLookup: dfsLookup,
+          } as EaCAPIProcessor,
+        } as EaCApplicationAsCode,
+      },
+      DFSs: {
+        [dfsLookup]: {
+          Details: options?.DFS?.Details ??
+              stewardApiMetaPath.startsWith(fileScheme)
+            ? ({
+              Type: "Local",
+              FileRoot: stewardApiMetaPath.slice(fileScheme.length),
+              DefaultFile: "index.ts",
+              Extensions: ["ts"],
+              WorkerPath: import.meta.resolve(
+                "@fathym/eac-dfs/workers/local",
+              ),
+            } as EaCLocalDistributedFileSystemDetails)
+            : ({
+              Type: "JSR",
+              Package: "@fathym/eac-azure",
+              Version: "",
+              FileRoot: "/src/steward/api/",
+              DefaultFile: "index.ts",
+              Extensions: ["ts"],
+              WorkerPath: import.meta.resolve(
+                "@fathym/eac-dfs/workers/jsr",
+              ),
+            } as EaCJSRDistributedFileSystemDetails),
+        },
+      },
+    },
+  };
 }

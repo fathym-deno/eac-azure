@@ -1,2 +1,2 @@
-export * from "./EaCAzureStewardClient.ts";
-export * from "./loadEaCAzureStewardSvc.ts";
+export * from "./EaCAzureAPIClient.ts";
+export * from "./loadEaCAzureAPISvc.ts";

@@ -15,4 +15,4 @@ export type { BillingAccount } from "npm:@azure/arm-billing@4.1.0";
 
 export type { EaCServiceDefinitions } from "../../azure/.exports.ts";
 
-export type { ExplorerRequest } from "../api/.exports.ts";
+export type { ExplorerRequest } from "../../api/.exports.ts";

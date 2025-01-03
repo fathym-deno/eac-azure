@@ -1,2 +1,2 @@
-export * from "./AzureTenanatsRequest.ts";
-export * from "./ExplorerRequest.ts";
+export * from "./EaCCloudDeployment.ts";
+export * from "./EaCCloudActuatorCheckRequest.ts";
