@@ -1,3 +1,5 @@
+export { merge } from "jsr:@fathym/common@0.2.173";
+
 export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.28";
 export { type EaCRuntimeHandlers } from "jsr:@fathym/eac@0.2.28/runtime/pipelines";
 export type {
@@ -10,11 +12,14 @@ export type {
   EaCActuatorResponse,
 } from "jsr:@fathym/eac@0.2.28/steward/actuators";
 
+export { resolveDynamicValues } from "jsr:@fathym/eac-applications@0.0.46/utils";
+
 export type { Deployment } from "npm:@azure/arm-resources@5.2.0";
 
 export type {
   EaCCloudAsCode,
   EaCCloudAzureDetails,
+  EaCSecretAsCode,
   EverythingAsCodeClouds,
 } from "../../azure/.exports.ts";
 export { isEaCCloudAzureDetails } from "../../azure/.exports.ts";
@@ -23,6 +28,7 @@ export {
   beginEaCDeployments,
   buildCloudDeployments,
   deconstructCloudDetailsSecrets,
+  eacGetSecrets,
   eacSetSecrets,
   ensureRoleAssignments,
   finalizeCloudDetails,
@@ -30,4 +36,5 @@ export {
   loadCloudResourceGroupsConnections,
   loadDeploymentDetails,
   loadMainSecretClient,
+  loadSecretClient,
 } from "../../utils/.exports.ts";

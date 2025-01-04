@@ -5,7 +5,7 @@ import {
   EaCCloudAsCode,
   EaCRuntimeHandlers,
   loadCloudResourceGroupsConnections,
-} from "./.deps.ts";
+} from "../.deps.ts";
 
 export default {
   async POST(req, ctx) {

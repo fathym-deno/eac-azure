@@ -22,8 +22,8 @@ export {
   isEverythingAsCodeClouds,
 } from "../azure/.exports.ts";
 
-export { merge } from "jsr:@fathym/common@0.2.161";
-export { getPackageLogger } from "jsr:@fathym/common@0.2.161/log";
+export { merge } from "jsr:@fathym/common@0.2.173";
+export { getPackageLogger } from "jsr:@fathym/common@0.2.173/log";
 
 export { kebabCase } from "jsr:@luca/cases@1.0.0";
 

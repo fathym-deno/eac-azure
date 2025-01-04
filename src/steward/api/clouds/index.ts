@@ -14,7 +14,7 @@ import {
   finalizeCloudDetails,
   isEaCCloudAzureDetails,
   loadMainSecretClient,
-} from "./.deps.ts";
+} from "../.deps.ts";
 
 export default {
   async POST(req, ctx) {

@@ -9,25 +9,26 @@ import {
   EverythingAsCodeDenoKV,
 } from "./.deps.ts";
 
-export type EaCAzureStewardPluginOptions = EaCStewardPluginOptions;
+export type EaCAzureSecretsStewardPluginOptions = EaCStewardPluginOptions;
 
-export default class EaCAzureStewardPlugin implements EaCRuntimePlugin {
-  constructor(protected options?: EaCAzureStewardPluginOptions) {}
+export default class EaCAzureSecretsStewardPlugin implements EaCRuntimePlugin {
+  constructor(protected options?: EaCAzureSecretsStewardPluginOptions) {}
 
   public Setup(_config: EaCRuntimeConfig): Promise<EaCRuntimePluginConfig> {
-    const stewardApiMetaPath = import.meta.resolve("../steward/api");
+    const stewardApiMetaPath = import.meta.resolve("../steward/api/secrets");
 
     const pluginConfig: EaCRuntimePluginConfig<
       EverythingAsCode & EverythingAsCodeApplications & EverythingAsCodeDenoKV
     > = buildStewardApiPluginConfig(
-      EaCAzureStewardPlugin.name,
+      EaCAzureSecretsStewardPlugin.name,
       stewardApiMetaPath,
       "core",
-      "steward-azure",
-      "fathym:eac-azure/steward/api",
-      "/api/steward/azure*",
+      "steward-azure-secrets",
+      "fathym:eac-azure/steward/api/secrets",
+      "/api/steward/azure/secrets*",
       "@fathym/eac-azure",
-      this.options,
+      this.options!,
+      "/src/steward/secrets/",
     );
 
     return Promise.resolve(pluginConfig);

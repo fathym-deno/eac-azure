@@ -6,8 +6,8 @@ import {
   EverythingAsCodeClouds,
   loadAzureCloudCredentials,
   loadDeploymentDetails,
-} from "./.deps.ts";
-import { EaCCloudActuatorCheckRequest } from "./EaCCloudActuatorCheckRequest.ts";
+} from "../.deps.ts";
+import { EaCCloudActuatorCheckRequest } from "../EaCCloudActuatorCheckRequest.ts";
 
 export default {
   async POST(req, ctx) {
