@@ -4,7 +4,7 @@ export type { EaCCloudRoleAssignment } from "../azure/EaCCloudRoleAssignment.ts"
 export { Logger } from "jsr:@std/log@0.224.9/logger";
 export { delay } from "jsr:@std/async@1.0.8/delay";
 export type { EaCCloudDeployment } from "../steward/api/.exports.ts";
-export type { EaCActuatorCheckRequest } from "jsr:@fathym/eac@0.2.27/steward/actuators";
+export type { EaCActuatorCheckRequest } from "jsr:@fathym/eac@0.2.28/steward/actuators";
 export type {
   EaCCloudAsCode,
   EaCCloudAzureDetails,

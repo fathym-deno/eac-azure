@@ -1,5 +1,5 @@
-export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.27";
-export { type EaCRuntimeHandlers } from "jsr:@fathym/eac@0.2.27/runtime/pipelines";
+export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.28";
+export { type EaCRuntimeHandlers } from "jsr:@fathym/eac@0.2.28/runtime/pipelines";
 export type {
   EaCActuatorCheckRequest,
   EaCActuatorCheckResponse,
@@ -8,7 +8,7 @@ export type {
   EaCActuatorErrorResponse,
   EaCActuatorRequest,
   EaCActuatorResponse,
-} from "jsr:@fathym/eac@0.2.27/steward/actuators";
+} from "jsr:@fathym/eac@0.2.28/steward/actuators";
 
 export type { Deployment } from "npm:@azure/arm-resources@5.2.0";
 
