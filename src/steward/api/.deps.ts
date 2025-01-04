@@ -13,6 +13,7 @@ export type {
 } from "jsr:@fathym/eac@0.2.28/steward/actuators";
 
 export { resolveDynamicValues } from "jsr:@fathym/eac-applications@0.0.46/utils";
+export type { EaCStewardAPIState } from "jsr:@fathym/eac-applications@0.0.46/steward/api";
 
 export type { Deployment } from "npm:@azure/arm-resources@5.2.0";
 

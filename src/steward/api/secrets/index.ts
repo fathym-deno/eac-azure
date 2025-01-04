@@ -4,6 +4,7 @@ import {
   EaCRuntimeHandlers,
   EaCSecretAsCode,
   eacSetSecrets,
+  EaCStewardAPIState,
   EverythingAsCode,
   EverythingAsCodeClouds,
   loadSecretClient,
@@ -71,4 +72,4 @@ export default {
       Model: secretDef,
     } as EaCActuatorResponse);
   },
-} as EaCRuntimeHandlers;
+} as EaCRuntimeHandlers<EaCStewardAPIState>;
