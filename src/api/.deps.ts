@@ -8,39 +8,39 @@ export type {
   EaCMetadataBase,
   EaCUserRecord,
   EverythingAsCode,
-} from "jsr:@fathym/eac@0.2.28";
+} from "jsr:@fathym/eac@0.2.31";
 export type {
   EaCRuntimeHandler,
   EaCRuntimeHandlers,
   EaCRuntimeHandlerSet,
-} from "jsr:@fathym/eac@0.2.28/runtime/pipelines";
+} from "jsr:@fathym/eac@0.2.31/runtime/pipelines";
 export type {
   EaCCommitRequest,
   EaCCommitResponse,
   EaCDeleteRequest,
-} from "jsr:@fathym/eac@0.2.28/steward";
-export { eacExists } from "jsr:@fathym/eac@0.2.28/steward/utils";
+} from "jsr:@fathym/eac@0.2.31/steward";
+export { eacExists } from "jsr:@fathym/eac@0.2.31/steward/utils";
 export {
   type EaCStatus,
   EaCStatusProcessingTypes,
-} from "jsr:@fathym/eac@0.2.28/steward/status";
+} from "jsr:@fathym/eac@0.2.31/steward/status";
 
 export {
   type EaCStewardAPIState,
   userEaCMiddleware,
-} from "jsr:@fathym/eac-applications@0.0.18/steward/api";
+} from "jsr:@fathym/eac-applications@0.0.49/steward/api";
 
 export {
   type BillingAccount,
   BillingManagementClient,
-} from "npm:@azure/arm-billing";
+} from "npm:@azure/arm-billing@5.0.0";
 
 export {
   type Provider,
   ResourceManagementClient,
 } from "npm:@azure/arm-resources@5.2.0";
 
-export type { FileReadResponse } from "npm:@azure/storage-file-datalake";
+export type { FileReadResponse } from "npm:@azure/storage-file-datalake@12.25.0";
 
 export {
   type Location,
@@ -49,7 +49,7 @@ export {
   type TenantIdDescription,
 } from "npm:@azure/arm-subscriptions@5.1.0";
 
-export { parse as json2csv } from "npm:json2csv";
+export { parse as json2csv } from "npm:json2csv@5.0.7";
 
 export type {
   EaCCloudAzureDetails,
