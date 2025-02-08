@@ -28,7 +28,7 @@ export {
 export {
   type EaCStewardAPIState,
   userEaCMiddleware,
-} from "jsr:@fathym/eac-applications@0.0.49/steward/api";
+} from "jsr:@fathym/eac-applications@0.0.50/steward/api";
 
 export {
   type BillingAccount,
