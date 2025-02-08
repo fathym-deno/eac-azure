@@ -106,7 +106,7 @@ export default class EaCAzureAPIPlugin implements EaCRuntimePlugin {
                 DefaultFile: "index.ts",
                 Extensions: ["ts"],
                 WorkerPath: import.meta.resolve(
-                  "@fathym/eac-dfs/workers/local",
+                  "@fathym/eac/dfs/workers/local",
                 ),
               } as EaCLocalDistributedFileSystemDetails)
               : ({
@@ -117,7 +117,7 @@ export default class EaCAzureAPIPlugin implements EaCRuntimePlugin {
                 DefaultFile: "index.ts",
                 Extensions: ["ts"],
                 WorkerPath: import.meta.resolve(
-                  "@fathym/eac-dfs/workers/jsr",
+                  "@fathym/eac/dfs/workers/jsr",
                 ),
               } as EaCJSRDistributedFileSystemDetails),
           },
