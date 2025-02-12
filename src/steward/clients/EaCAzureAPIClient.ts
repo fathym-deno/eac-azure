@@ -4,6 +4,7 @@ import {
   EaCServiceDefinitions,
   ExplorerRequest,
   KustoResponseDataSet,
+  Location,
   Subscription,
   TenantIdDescription,
 } from "./.deps.ts";
