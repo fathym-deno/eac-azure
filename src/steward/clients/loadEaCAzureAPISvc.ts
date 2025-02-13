@@ -1,23 +1,32 @@
 import { loadJwtConfig } from "./.deps.ts";
 import { EaCAzureAPIClient } from "./EaCAzureAPIClient.ts";
 
-export async function loadEaCAzureAPISvc(): Promise<
-  EaCAzureAPIClient
->;
+export async function loadEaCAzureAPISvc(): Promise<EaCAzureAPIClient>;
 
 export async function loadEaCAzureAPISvc(
+  apiRoot: string,
+): Promise<EaCAzureAPIClient>;
+
+export async function loadEaCAzureAPISvc(
+  apiRoot: string,
   eacApiKey: string,
 ): Promise<EaCAzureAPIClient>;
 
 export async function loadEaCAzureAPISvc(
+  apiRoot: string,
   entLookup: string,
   username: string,
 ): Promise<EaCAzureAPIClient>;
 
 export async function loadEaCAzureAPISvc(
+  apiRoot?: string,
   eacApiKeyEntLookup?: string,
   username?: string,
 ): Promise<EaCAzureAPIClient> {
+  if (typeof apiRoot === "undefined") {
+    apiRoot = "/azure";
+  }
+
   if (!eacApiKeyEntLookup) {
     eacApiKeyEntLookup = Deno.env.get("EAC_API_KEY");
 
@@ -43,7 +52,7 @@ export async function loadEaCAzureAPISvc(
   const eacBaseUrl = Deno.env.get("EAC_API_BASE_URL")!;
 
   return new EaCAzureAPIClient(
-    new URL(eacBaseUrl),
+    new URL(apiRoot, eacBaseUrl),
     eacApiKeyEntLookup ?? "",
   );
 }
