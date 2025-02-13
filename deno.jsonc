@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "exports": {
     ".": "./src/azure/.exports.ts",
-    "./api": "./src/steward/api/.exports.ts",
+    "./api": "./src/api/.exports.ts",
     "./steward/api": "./src/steward/api/.exports.ts",
     "./steward/clients": "./src/steward/clients/.exports.ts",
     "./steward/plugins": "./src/steward/plugins/.exports.ts",
