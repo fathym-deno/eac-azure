@@ -16,11 +16,10 @@ export class EaCAzureAPIClient extends EaCBaseClient {
 
   public Azure = {
     BillingAccounts: async (
-      entLookup: string,
       azureAccessToken: string,
     ): Promise<BillingAccount[]> => {
       const response = await fetch(
-        this.loadClientUrl(`${entLookup}/azure/billing/accounts`),
+        this.loadClientUrl(`billing/accounts`),
         {
           method: "GET",
           headers: this.loadHeaders({
@@ -33,35 +32,27 @@ export class EaCAzureAPIClient extends EaCBaseClient {
     },
 
     Subscriptions: async (
-      entLookup: string,
       azureAccessToken: string,
     ): Promise<Subscription[]> => {
-      const response = await fetch(
-        this.loadClientUrl(`${entLookup}/azure/subscriptions`),
-        {
-          method: "GET",
-          headers: this.loadHeaders({
-            "x-eac-azure-access-token": azureAccessToken,
-          }),
-        },
-      );
+      const response = await fetch(this.loadClientUrl(`subscriptions`), {
+        method: "GET",
+        headers: this.loadHeaders({
+          "x-eac-azure-access-token": azureAccessToken,
+        }),
+      });
 
       return await this.json(response);
     },
 
     Tenants: async (
-      entLookup: string,
       azureAccessToken: string,
     ): Promise<TenantIdDescription[]> => {
-      const response = await fetch(
-        this.loadClientUrl(`${entLookup}/azure/tenants`),
-        {
-          method: "GET",
-          headers: this.loadHeaders({
-            "x-eac-azure-access-token": azureAccessToken,
-          }),
-        },
-      );
+      const response = await fetch(this.loadClientUrl(`tenants`), {
+        method: "GET",
+        headers: this.loadHeaders({
+          "x-eac-azure-access-token": azureAccessToken,
+        }),
+      });
 
       return await this.json(response);
     },
@@ -69,12 +60,11 @@ export class EaCAzureAPIClient extends EaCBaseClient {
 
   public Cloud = {
     APIVersions: async (
-      entLookup: string,
       cloudLookup: string,
       svcDefs: EaCServiceDefinitions,
     ): Promise<Record<string, string>> => {
       const response = await fetch(
-        this.loadClientUrl(`${entLookup}/azure/${cloudLookup}/api-versions`),
+        this.loadClientUrl(`${cloudLookup}/api-versions`),
         {
           method: "POST",
           headers: this.loadHeaders(),
@@ -86,17 +76,12 @@ export class EaCAzureAPIClient extends EaCBaseClient {
     },
 
     AuthToken: async (
-      entLookup: string,
       cloudLookup: string,
       scopes: string[],
     ): Promise<string> => {
       const response = await fetch(
         this.loadClientUrl(
-          `${entLookup}/azure/${cloudLookup}/auth-token?scope=${
-            scopes.join(
-              ",",
-            )
-          }`,
+          `${cloudLookup}/auth-token?scope=${scopes.join(",")}`,
         ),
         {
           method: "GET",
@@ -108,14 +93,13 @@ export class EaCAzureAPIClient extends EaCBaseClient {
     },
 
     EnsureProviders: async (
-      entLookup: string,
       cloudLookup: string,
       svcDefs: EaCServiceDefinitions,
     ): Promise<{
       Locations: Location[];
     }> => {
       const response = await fetch(
-        this.loadClientUrl(`${entLookup}/azure/${cloudLookup}/providers`),
+        this.loadClientUrl(`${cloudLookup}/providers`),
         {
           method: "POST",
           headers: this.loadHeaders(),
@@ -127,14 +111,13 @@ export class EaCAzureAPIClient extends EaCBaseClient {
     },
 
     Locations: async (
-      entLookup: string,
       cloudLookup: string,
       svcDefs: EaCServiceDefinitions,
     ): Promise<{
       Locations: Location[];
     }> => {
       const response = await fetch(
-        this.loadClientUrl(`${entLookup}/azure/${cloudLookup}/locations`),
+        this.loadClientUrl(`${cloudLookup}/locations`),
         {
           method: "POST",
           headers: this.loadHeaders(),
@@ -148,7 +131,6 @@ export class EaCAzureAPIClient extends EaCBaseClient {
 
   public DataLake = {
     Execute: async (
-      entLookup: string,
       cloudLookup: string,
       resGroupLookup: string,
       resLookups: string[],
@@ -173,7 +155,7 @@ export class EaCAzureAPIClient extends EaCBaseClient {
 
       const response = await fetch(
         this.loadClientUrl(
-          `${entLookup}/azure/${cloudLookup}/${resGroupLookup}/${res}/data-lake/${fileSystem}?${query}`,
+          `${cloudLookup}/${resGroupLookup}/${res}/data-lake/${fileSystem}?${query}`,
         ),
         {
           method: "GET",
@@ -187,7 +169,6 @@ export class EaCAzureAPIClient extends EaCBaseClient {
 
   public Explorer = {
     Query: async (
-      entLookup: string,
       cloudLookup: string,
       resGroupLookup: string,
       resLookups: string[],
@@ -198,7 +179,7 @@ export class EaCAzureAPIClient extends EaCBaseClient {
 
       const response = await fetch(
         this.loadClientUrl(
-          `${entLookup}/azure/${cloudLookup}/${resGroupLookup}/${res}/explorer/${db}`,
+          `${cloudLookup}/${resGroupLookup}/${res}/explorer/${db}`,
         ),
         {
           method: "POST",
