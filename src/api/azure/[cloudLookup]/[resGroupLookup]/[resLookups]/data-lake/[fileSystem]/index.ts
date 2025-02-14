@@ -6,13 +6,13 @@ import {
   flattenJson,
   json2csv,
   loadDataLakeClient,
-} from "../../../../../../../.deps.ts";
+} from "../../../../../../.deps.ts";
 
 export default {
   async GET(req, ctx) {
     const logger = ctx.Runtime.Logs;
 
-    const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
+    const entLookup = ctx.State.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 

@@ -4,12 +4,10 @@ import {
   EaCRuntimeHandlers,
   EaCStewardAPIState,
   loadAzureCredentialsForToken,
-} from "../../../.deps.ts";
+} from "../../.deps.ts";
 
 export default {
   async GET(req, ctx) {
-    const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
-
     const azureAccessToken = req.headers.get("x-eac-azure-access-token")!;
 
     const creds = await loadAzureCredentialsForToken(azureAccessToken);

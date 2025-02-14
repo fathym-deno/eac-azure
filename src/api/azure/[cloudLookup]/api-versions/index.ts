@@ -7,11 +7,11 @@ import {
   loadAzureCloudCredentials,
   merge,
   ResourceManagementClient,
-} from "../../../../.deps.ts";
+} from "../../../.deps.ts";
 
 export default {
   async POST(req, ctx) {
-    const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
+    const entLookup = ctx.State.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 

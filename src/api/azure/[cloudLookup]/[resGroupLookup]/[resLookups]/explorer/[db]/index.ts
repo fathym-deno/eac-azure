@@ -3,12 +3,12 @@ import {
   EaCStewardAPIState,
   EverythingAsCodeClouds,
   loadKustoClient,
-} from "../../../../../../../.deps.ts";
-import { ExplorerRequest } from "../../../../../../../ExplorerRequest.ts";
+} from "../../../../../../.deps.ts";
+import { ExplorerRequest } from "../../../../../../ExplorerRequest.ts";
 
 export default {
   async POST(req, ctx) {
-    const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
+    const entLookup = ctx.State.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 
