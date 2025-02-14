@@ -44,7 +44,7 @@ export default class EaCAzureAPIPlugin implements EaCRuntimePlugin {
   constructor(protected options?: EaCAzureAPIPluginOptions) {}
 
   public Setup(_config: EaCRuntimeConfig): Promise<EaCRuntimePluginConfig> {
-    const stewardApiMetaPath = import.meta.resolve("../../api");
+    const stewardApiMetaPath = import.meta.resolve("../../api/azure");
 
     const fileScheme = "file:///";
 
@@ -52,7 +52,7 @@ export default class EaCAzureAPIPlugin implements EaCRuntimePlugin {
 
     const appLookup = this.options?.Application?.Lookup ?? "api-azure";
 
-    const dfsLookup = this.options?.DFS?.Lookup ?? "fathym:eac-azure/api";
+    const dfsLookup = this.options?.DFS?.Lookup ?? "fathym:eac-azure/api/azure";
 
     const jwtValidationLookup = this.options?.Application?.JWTValidationModifier
       ?.Lookup;
@@ -113,7 +113,7 @@ export default class EaCAzureAPIPlugin implements EaCRuntimePlugin {
                 Type: "JSR",
                 Package: "@fathym/eac-azure",
                 Version: "",
-                FileRoot: "/src/steward/api/eac/",
+                FileRoot: "/src/api/azure/",
                 DefaultFile: "index.ts",
                 Extensions: ["ts"],
                 WorkerPath: import.meta.resolve(
