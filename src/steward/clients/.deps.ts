@@ -1,6 +1,6 @@
-export { loadJwtConfig } from "jsr:@fathym/common@0.2.178/jwt";
+export { loadJwtConfig } from "jsr:@fathym/common@0.2.179/jwt";
 
-export { EaCBaseClient } from "jsr:@fathym/eac@0.2.78/steward/clients";
+export { EaCBaseClient } from "jsr:@fathym/eac@0.2.84/steward/clients";
 
 export { KustoResponseDataSet } from "npm:azure-kusto-data@6.0.3";
 
