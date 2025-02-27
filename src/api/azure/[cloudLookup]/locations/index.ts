@@ -57,7 +57,7 @@ export default {
           });
       }
 
-      const locationNames = Array.from(new Set(...svcDefLocations));
+      const locationNames = svcDefLocations;
 
       const subClient = new SubscriptionClient(creds);
 
