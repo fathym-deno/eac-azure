@@ -47,7 +47,7 @@ export default {
 
         const provider = await resClient.providers.get(sd);
 
-        const providerTypeLocations = provider.resourceTypes
+        provider.resourceTypes
           ?.filter((rt) => {
             return svcDef.Types.includes(rt.resourceType!);
           })
