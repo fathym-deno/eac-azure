@@ -25,7 +25,7 @@ export default class EaCAzureCloudsStewardPlugin implements EaCRuntimePlugin {
       "core",
       "steward-azure-clouds",
       "fathym:eac-azure/steward/api/clouds",
-      "/api/steward/clouds*",
+      "/api/steward/clouds/azure*",
       "@fathym/eac-azure",
       this.options!,
       "/src/steward/api/clouds/",

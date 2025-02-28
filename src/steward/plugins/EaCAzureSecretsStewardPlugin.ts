@@ -25,7 +25,7 @@ export default class EaCAzureSecretsStewardPlugin implements EaCRuntimePlugin {
       "core",
       "steward-azure-secrets",
       "fathym:eac-azure/steward/api/secrets",
-      "/api/steward/api/secrets*",
+      "/api/steward/secrets/azure*",
       "@fathym/eac-azure",
       this.options!,
       "/src/steward/secrets/",
