@@ -10,7 +10,8 @@ export type { EaCActuatorCheckRequest } from "jsr:@fathym/eac@0.2.91/steward/act
 
 export { kebabCase } from "jsr:@luca/cases@1.0.0";
 
-export * as Handlebars from "npm:handlebars@4.7.8/dist/handlebars.min.js";
+import Handlebars from "npm:handlebars@4.7.8/dist/handlebars.min.js";
+export { Handlebars };
 
 export {
   type AccessToken,
