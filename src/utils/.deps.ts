@@ -1,4 +1,4 @@
-export { Logger } from "jsr:@std/log@0.224.9/logger";
+export { Logger } from "jsr:@std/log@0.224.14/logger";
 export { delay } from "jsr:@std/async@1.0.8/delay";
 
 export { merge } from "jsr:@fathym/common@0.2.179";

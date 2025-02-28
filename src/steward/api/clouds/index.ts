@@ -14,7 +14,7 @@ import {
   finalizeCloudDetails,
   isEaCCloudAzureDetails,
   loadMainSecretClient,
-} from "../.deps.ts";
+} from '../.deps.ts';
 
 export default {
   async POST(req, ctx) {
@@ -26,12 +26,11 @@ export default {
       const handlerRequest: EaCActuatorRequest = await req.json();
 
       logger.Package.debug(
-        `Processing EaC commit ${handlerRequest.CommitID} Cloud processes for cloud ${handlerRequest.Lookup}`,
+        `Processing EaC commit ${handlerRequest.CommitID} Cloud processes for cloud ${handlerRequest.Lookup}`
       );
 
-      const eac = handlerRequest.EaC as
-        & EverythingAsCode
-        & EverythingAsCodeClouds;
+      const eac = handlerRequest.EaC as EverythingAsCode &
+        EverythingAsCodeClouds;
 
       const currentClouds = eac.Clouds || {};
 
@@ -46,7 +45,7 @@ export default {
         eac.EnterpriseLookup!,
         cloudLookup,
         handlerRequest.CommitID,
-        cloud,
+        cloud
       );
 
       const deployments = await buildCloudDeployments(
@@ -54,14 +53,14 @@ export default {
         handlerRequest.CommitID,
         eac,
         cloudLookup,
-        cloud,
+        cloud
       );
 
       const checks: EaCActuatorCheckRequest[] = await beginEaCDeployments(
         logger.Package,
         handlerRequest.CommitID,
         cloud.Details ? cloud : current,
-        deployments,
+        deployments
       );
 
       const secretClient = await loadMainSecretClient();
@@ -72,7 +71,7 @@ export default {
 
       if (
         isEaCCloudAzureDetails(cloudDetails) &&
-        !cloudDetails.AuthKey.startsWith("$secret:")
+        !cloudDetails.AuthKey.startsWith('$secret:')
       ) {
         const secreted = await eacSetSecrets(secretClient, secretRoot, {
           AuthKey: cloudDetails.AuthKey,
@@ -93,10 +92,8 @@ export default {
         Model: cloud,
       } as EaCActuatorResponse);
     } catch (err) {
-      logger.Package.error(
-        "There was an error starting the cloud deployments",
-        err,
-      );
+      logger.Package.error('There was an error starting the cloud deployments');
+      logger.Package.error(err);
 
       return Response.json({
         HasError: true,
