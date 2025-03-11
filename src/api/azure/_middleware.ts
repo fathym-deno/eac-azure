@@ -1,8 +1,8 @@
 import {
+  buildUserEaCMiddleware,
   EaCRuntimeHandler,
   EaCRuntimeHandlerSet,
   EaCStewardAPIState,
-  userEaCMiddleware,
 } from "../.deps.ts";
 
-export default [userEaCMiddleware] as EaCRuntimeHandlerSet;
+export default [buildUserEaCMiddleware()] as EaCRuntimeHandlerSet;
