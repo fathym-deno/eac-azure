@@ -12,8 +12,8 @@ export type {
   EaCActuatorResponse,
 } from "jsr:@fathym/eac@0.2.96/steward/actuators";
 
-export { resolveDynamicValues } from "jsr:@fathym/eac-applications@0.0.105-integration/utils";
-export type { EaCStewardAPIState } from "jsr:@fathym/eac-applications@0.0.105-integration/steward/api";
+export { resolveDynamicValues } from "jsr:@fathym/eac-applications@0.0.112/utils";
+export type { EaCStewardAPIState } from "jsr:@fathym/eac-applications@0.0.112/steward/api";
 
 export type { Deployment } from "npm:@azure/arm-resources@5.2.0";
 
