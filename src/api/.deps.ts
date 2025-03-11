@@ -8,27 +8,27 @@ export type {
   EaCMetadataBase,
   EaCUserRecord,
   EverythingAsCode,
-} from "jsr:@fathym/eac@0.2.94";
+} from "jsr:@fathym/eac@0.2.96";
 export type {
   EaCRuntimeHandler,
   EaCRuntimeHandlers,
   EaCRuntimeHandlerSet,
-} from "jsr:@fathym/eac@0.2.94/runtime/pipelines";
+} from "jsr:@fathym/eac@0.2.96/runtime/pipelines";
 export type {
   EaCCommitRequest,
   EaCCommitResponse,
   EaCDeleteRequest,
-} from "jsr:@fathym/eac@0.2.94/steward";
-export { eacExists } from "jsr:@fathym/eac@0.2.94/steward/utils";
+} from "jsr:@fathym/eac@0.2.96/steward";
+export { eacExists } from "jsr:@fathym/eac@0.2.96/steward/utils";
 export {
   type EaCStatus,
   EaCStatusProcessingTypes,
-} from "jsr:@fathym/eac@0.2.94/steward/status";
+} from "jsr:@fathym/eac@0.2.96/steward/status";
 
 export {
   type EaCStewardAPIState,
   userEaCMiddleware,
-} from "jsr:@fathym/eac-applications@0.0.108/steward/api";
+} from "jsr:@fathym/eac-applications@0.0.105-integration/steward/api";
 
 export {
   type BillingAccount,
