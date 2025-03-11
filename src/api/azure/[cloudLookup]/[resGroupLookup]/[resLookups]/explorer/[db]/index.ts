@@ -2,6 +2,7 @@ import {
   EaCRuntimeHandlers,
   EaCStewardAPIState,
   EverythingAsCodeClouds,
+  loadEaCStewardSvc,
   loadKustoClient,
 } from "../../../../../../.deps.ts";
 import { ExplorerRequest } from "../../../../../../ExplorerRequest.ts";
@@ -32,15 +33,9 @@ export default {
       resGroupLookup,
       resLookups,
       async (entLookup) => {
-        const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, "eac");
+        const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
 
-        const eac = await eacKv.get<EverythingAsCodeClouds>([
-          "EaC",
-          "Current",
-          entLookup,
-        ]);
-
-        return eac.value!;
+        return await eacSvc.EaC.Get();
       },
       svcSuffix,
     );

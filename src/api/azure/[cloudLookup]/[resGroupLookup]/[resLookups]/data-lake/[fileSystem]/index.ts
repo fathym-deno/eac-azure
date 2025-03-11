@@ -6,6 +6,7 @@ import {
   flattenJson,
   json2csv,
   loadDataLakeClient,
+  loadEaCStewardSvc,
 } from "../../../../../../.deps.ts";
 
 export default {
@@ -67,15 +68,9 @@ export default {
       resGroupLookup,
       resLookups,
       async (entLookup) => {
-        const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, "eac");
+        const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
 
-        const eac = await eacKv.get<EverythingAsCodeClouds>([
-          "EaC",
-          "Current",
-          entLookup,
-        ]);
-
-        return eac.value!;
+        return await eacSvc.EaC.Get();
       },
       svcSuffix,
     );

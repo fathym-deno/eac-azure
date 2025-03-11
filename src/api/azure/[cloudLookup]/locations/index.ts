@@ -5,6 +5,7 @@ import {
   EaCStewardAPIState,
   EverythingAsCodeClouds,
   loadAzureCloudCredentials,
+  loadEaCStewardSvc,
   Location,
   ResourceManagementClient,
   SubscriptionClient,
@@ -18,15 +19,9 @@ export default {
 
     const svcDefs: EaCServiceDefinitions = await req.json();
 
-    const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, "eac");
+    const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
 
-    const eacResult = await eacKv.get<EverythingAsCodeClouds>([
-      "EaC",
-      "Current",
-      entLookup,
-    ]);
-
-    const eac = eacResult.value!;
+    const eac: EverythingAsCodeClouds = await eacSvc.EaC.Get();
 
     const creds = await loadAzureCloudCredentials(eac, cloudLookup);
 

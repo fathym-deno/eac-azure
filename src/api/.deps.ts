@@ -19,6 +19,7 @@ export type {
   EaCCommitResponse,
   EaCDeleteRequest,
 } from "jsr:@fathym/eac@0.2.96/steward";
+export { loadEaCStewardSvc } from "jsr:@fathym/eac@0.2.96/steward/clients";
 export { eacExists } from "jsr:@fathym/eac@0.2.96/steward/utils";
 export {
   type EaCStatus,
