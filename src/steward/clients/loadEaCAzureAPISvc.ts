@@ -38,7 +38,7 @@ export async function loadEaCAzureAPISvc(
     );
   }
 
-  const apiRoot = Deno.env.get("EaCAzureAPI_URL")!;
+  const apiRoot = Deno.env.get("EaCAzureAPIClient_URL")!;
 
   return new EaCAzureAPIClient(
     new URL(apiRoot),
