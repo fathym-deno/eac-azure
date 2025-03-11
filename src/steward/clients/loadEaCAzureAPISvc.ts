@@ -38,12 +38,10 @@ export async function loadEaCAzureAPISvc(
     );
   }
 
-  const eacBaseUrl = Deno.env.get("EaCStewardClient_URL")!;
-
-  const apiRoot = Deno.env.get("EaCAzureAPI_ROOT") || "./";
+  const apiRoot = Deno.env.get("EaCAzureAPI_URL")!;
 
   return new EaCAzureAPIClient(
-    new URL(apiRoot, eacBaseUrl),
+    new URL(apiRoot),
     eacApiKeyEntLookup ?? "",
   );
 }
