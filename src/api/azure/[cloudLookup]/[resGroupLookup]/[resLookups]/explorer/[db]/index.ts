@@ -9,7 +9,7 @@ import { ExplorerRequest } from "../../../../../../ExplorerRequest.ts";
 
 export default {
   async POST(req, ctx) {
-    const entLookup = ctx.State.EnterpriseLookup;
+    const entLookup = ctx.State.EnterpriseLookup!;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 
@@ -33,7 +33,7 @@ export default {
       resGroupLookup,
       resLookups,
       async (entLookup) => {
-        const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
+        const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username!);
 
         return await eacSvc.EaC.Get();
       },
@@ -44,6 +44,6 @@ export default {
 
     const dataSetResp = await kustoClient.execute(db, explorerReq.Query);
 
-    return Response.json(JSON.stringify(dataSetResp));
+    return Response.json(dataSetResp);
   },
 } as EaCRuntimeHandlers<EaCStewardAPIState>;

@@ -1,4 +1,4 @@
-export { loadJwtConfig } from "jsr:@fathym/common@0.2.179/jwt";
+export { loadJwtConfig } from "jsr:@fathym/common@0.2.181/jwt";
 
 export { EaCBaseClient } from "jsr:@fathym/eac@0.2.105/steward/clients";
 

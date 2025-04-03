@@ -1,4 +1,4 @@
-export { merge } from "jsr:@fathym/common@0.2.179";
+export { merge } from "jsr:@fathym/common@0.2.181";
 
 export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.105";
 export { type EaCRuntimeHandlers } from "jsr:@fathym/eac@0.2.105/runtime/pipelines";
