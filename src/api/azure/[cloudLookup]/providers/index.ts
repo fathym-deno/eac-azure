@@ -24,7 +24,7 @@ export default {
 
     const svcDefs: EaCServiceDefinitions = await req.json();
 
-    const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
+    const eacSvc = await loadEaCStewardSvc(entLookup!, ctx.State.Username!);
 
     const eac: EverythingAsCodeClouds = await eacSvc.EaC.Get();
 

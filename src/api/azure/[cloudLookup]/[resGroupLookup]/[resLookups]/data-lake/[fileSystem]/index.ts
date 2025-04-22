@@ -13,7 +13,7 @@ export default {
   async GET(req, ctx) {
     const logger = ctx.Runtime.Logs;
 
-    const entLookup = ctx.State.EnterpriseLookup;
+    const entLookup = ctx.State.EnterpriseLookup!;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 
@@ -68,7 +68,7 @@ export default {
       resGroupLookup,
       resLookups,
       async (entLookup) => {
-        const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
+        const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username!);
 
         return await eacSvc.EaC.Get();
       },

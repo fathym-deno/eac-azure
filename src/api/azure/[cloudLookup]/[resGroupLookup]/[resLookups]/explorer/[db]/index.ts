@@ -44,6 +44,6 @@ export default {
 
     const dataSetResp = await kustoClient.execute(db, explorerReq.Query);
 
-    return Response.json(JSON.stringify(dataSetResp));
+    return Response.json(dataSetResp);
   },
 } as EaCRuntimeHandlers<EaCStewardAPIState>;
