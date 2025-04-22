@@ -20,6 +20,7 @@ export type {
   EaCDeleteRequest,
 } from "jsr:@fathym/eac@0.2.101/steward";
 export { loadEaCStewardSvc } from "jsr:@fathym/eac@0.2.101/steward/clients";
+export { waitForStatus } from "jsr:@fathym/eac@0.2.101/steward/status";
 export { eacExists } from "jsr:@fathym/eac@0.2.101/steward/utils";
 export {
   type EaCStatus,

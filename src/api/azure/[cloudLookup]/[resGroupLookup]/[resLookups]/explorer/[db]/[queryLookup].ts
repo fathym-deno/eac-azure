@@ -8,7 +8,7 @@ import {
 import { ExplorerRequest } from "../../../../../../ExplorerRequest.ts";
 
 export default {
-  async POST(req, ctx) {
+  async GET(req, ctx) {
     const entLookup = ctx.State.EnterpriseLookup!;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
@@ -25,7 +25,11 @@ export default {
 
     const svcSuffix = url.searchParams.get("svcSuffix") as string | undefined;
 
-    const explorerReq: ExplorerRequest = await req.json();
+    const lookup = ctx.Params.queryLookup as string;
+
+    const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username!);
+
+    const eac: EverythingAsCodeClouds = await eacSvc.EaC.Get();
 
     const kustoClient = await loadKustoClient(
       entLookup,
@@ -42,7 +46,7 @@ export default {
 
     kustoClient.ensureOpen();
 
-    const dataSetResp = await kustoClient.execute(db, explorerReq.Query);
+    const dataSetResp = await kustoClient.execute(db, eac.WarmQueries![lookup].Details!.Query);
 
     return Response.json(JSON.stringify(dataSetResp));
   },

@@ -1,6 +1,6 @@
 import { EaCVertexDetails } from "./.deps.ts";
 
-export type EaCWarmStorageQueryDetails = {
+export type EaCWarmQueryDetails = {
   Version: number;
 
   Query: string;

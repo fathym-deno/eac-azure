@@ -1,13 +1,13 @@
 import { EaCCloudAsCode } from "./EaCCloudAsCode.ts";
 import { EaCSecretAsCode } from "./EaCSecretAsCode.ts";
-import { EaCWarmStorageQueryAsCode } from "./EaCWarmStorageQueryAsCode.ts";
+import { EaCWarmQueryAsCode } from "./EaCWarmQueryAsCode.ts";
 
 export type EverythingAsCodeClouds = {
   Clouds?: Record<string, EaCCloudAsCode>;
 
   Secrets?: Record<string, EaCSecretAsCode>;
 
-  WarmStorageQueries?: Record<string, EaCWarmStorageQueryAsCode>;
+  WarmQueries?: Record<string, EaCWarmQueryAsCode>;
 };
 
 export function isEverythingAsCodeClouds(
