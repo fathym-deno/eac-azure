@@ -1,25 +1,25 @@
 import {
-    EaCRuntimeHandlers,
-    EaCStewardAPIState,
-    EverythingAsCodeClouds,
-    EverythingAsCode,
-    loadEaCStewardSvc
-  } from "../.deps.ts"
-  import { ExplorerRequest } from "../ExplorerRequest.ts"
-  
-  export default {
-    async GET(req, ctx) {
-        const entLookup = ctx.State.EnterpriseLookup;
+  EaCRuntimeHandlers,
+  EaCStewardAPIState,
+  EverythingAsCode,
+  EverythingAsCodeClouds,
+  loadEaCStewardSvc,
+} from "../.deps.ts";
+import { ExplorerRequest } from "../ExplorerRequest.ts";
 
-        const eacSvc = await loadEaCStewardSvc(entLookup!, ctx.State.Username!);
+export default {
+  async GET(req, ctx) {
+    const entLookup = ctx.State.EnterpriseLookup;
 
-        const eac: EverythingAsCode & EverythingAsCodeClouds = await eacSvc.EaC.Get();
+    const eacSvc = await loadEaCStewardSvc(entLookup!, ctx.State.Username!);
 
-        const transformed = Object.entries(eac.WarmQueries ?? {}).map(
-          ([_, value]) => (value.Details!)
-        );
-  
-      return Response.json(JSON.stringify(transformed));
-    },
-  } as EaCRuntimeHandlers<EaCStewardAPIState>;
-  
+    const eac: EverythingAsCode & EverythingAsCodeClouds = await eacSvc.EaC
+      .Get();
+
+    const transformed = Object.entries(eac.WarmQueries ?? {}).map(
+      ([_, value]) => (value.Details!),
+    );
+
+    return Response.json(JSON.stringify(transformed));
+  },
+} as EaCRuntimeHandlers<EaCStewardAPIState>;
