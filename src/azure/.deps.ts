@@ -1,4 +1,8 @@
+export { z } from "jsr:@fathym/common@0.2.261/third-party/zod";
+
 export {
   type EaCDetails,
+  EaCDetailsSchema,
   type EaCVertexDetails,
-} from "jsr:@fathym/eac@0.2.106";
+  EaCVertexDetailsSchema,
+} from "jsr:@fathym/eac@0.2.110";

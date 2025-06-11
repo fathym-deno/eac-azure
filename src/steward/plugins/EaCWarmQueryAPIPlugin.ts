@@ -52,7 +52,8 @@ export default class EaCWarmQueryAPIPlugin implements EaCRuntimePlugin {
 
     const appLookup = this.options?.Application?.Lookup ?? "api-warm-queries";
 
-    const dfsLookup = this.options?.DFS?.Lookup ?? "fathym:eac-azure/api/warm-queries";
+    const dfsLookup = this.options?.DFS?.Lookup ??
+      "fathym:eac-azure/api/warm-queries";
 
     const jwtValidationLookup = this.options?.Application?.JWTValidationModifier
       ?.Lookup;

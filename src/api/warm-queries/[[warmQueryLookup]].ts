@@ -10,7 +10,7 @@ import { ExplorerRequest } from "../ExplorerRequest.ts";
 
 export default {
   async GET(req, ctx) {
-    //debugger;
+
     const entLookup = ctx.State.EnterpriseLookup;
 
     const eacSvc = await loadEaCStewardSvc(entLookup!, ctx.State.Username!);
@@ -121,10 +121,9 @@ export default {
       commitResp.CommitID,
     );
 
-    return Response.json(status);
+    return Response.json(JSON.stringify(status));
   },
   async DELETE(req, ctx) {
-    //debugger;
     const entLookup = ctx.State.EnterpriseLookup;
 
     const lookup = ctx.Params.warmQueryLookup as string;
