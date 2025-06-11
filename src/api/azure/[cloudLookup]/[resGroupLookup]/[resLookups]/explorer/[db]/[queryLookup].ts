@@ -9,6 +9,7 @@ import { ExplorerRequest } from "../../../../../../ExplorerRequest.ts";
 
 export default {
   async GET(req, ctx) {
+    debugger;
     const entLookup = ctx.State.EnterpriseLookup!;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
