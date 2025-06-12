@@ -24,7 +24,32 @@ export type EverythingAsCodeClouds = {
 /**
  * Zod schema for `EverythingAsCodeClouds`.
  */
-export const EverythingAsCodeCloudsSchema: z.ZodType<EverythingAsCodeClouds> = z
+export const EverythingAsCodeCloudsSchema: z.ZodObject<
+  {
+    Clouds: z.ZodOptional<
+      z.ZodRecord<
+        z.ZodString,
+        z.ZodType<EaCCloudAsCode, z.ZodTypeDef, EaCCloudAsCode>
+      >
+    >;
+    Secrets: z.ZodOptional<
+      z.ZodRecord<
+        z.ZodString,
+        z.ZodType<EaCSecretAsCode, z.ZodTypeDef, EaCSecretAsCode>
+      >
+    >;
+    WarmQueries: z.ZodOptional<
+      z.ZodRecord<
+        z.ZodString,
+        z.ZodType<EaCWarmQueryAsCode, z.ZodTypeDef, EaCWarmQueryAsCode>
+      >
+    >;
+  },
+  "strip",
+  z.ZodTypeAny,
+  EverythingAsCodeClouds,
+  EverythingAsCodeClouds
+> = z
   .object({
     Clouds: z
       .record(EaCCloudAsCodeSchema)
