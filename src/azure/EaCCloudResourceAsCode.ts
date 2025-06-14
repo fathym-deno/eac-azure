@@ -1,9 +1,10 @@
-// deno-lint-ignore-file no-explicit-any
-import { EaCDetails, EaCDetailsSchema, z } from "./.deps.ts";
-import {
-  EaCCloudResourceDetails,
-  EaCCloudResourceDetailsSchema,
-} from "./EaCCloudResourceDetails.ts";
+import { z } from "./.deps.ts";
+import type { EaCDetails } from "./.deps.ts";
+import { EaCDetailsSchema } from "./.deps.ts";
+
+import type { EaCCloudResourceDetails } from "./EaCCloudResourceDetails.ts";
+import { EaCCloudResourceDetailsSchema } from "./EaCCloudResourceDetails.ts";
+
 import {
   EaCCloudWithResources,
   EaCCloudWithResourcesSchema,
@@ -19,39 +20,28 @@ export type EaCCloudResourceAsCode =
 
 /**
  * Schema for `EaCCloudResourceAsCode`.
- * Composes:
- *  - `EaCDetailsSchema` with narrowed `EaCCloudResourceDetailsSchema`
- *  - `EaCCloudWithResourcesSchema` for recursive resource maps
+ *
+ * 1. Start from the generic-with-resources schema (loose Record<string, unknown>)
+ * 2. Merge in EaCDetails + EaCCloudResourceDetails
+ * 3. Override Resources with a true recursive definition
  */
-export const EaCCloudResourceAsCodeSchema: z.ZodObject<
-  {
-    Resources: z.ZodOptional<z.ZodLazy<z.ZodRecord<z.ZodString, any>>>;
-  } & {
-    Details: z.ZodOptional<
-      z.ZodObject<
-        {
-          Description: z.ZodOptional<z.ZodString>;
-          Name: z.ZodOptional<z.ZodString>;
-        } & {
-          Order: z.ZodNumber;
-          Type: z.ZodEnum<["Format", "Container"]>;
-        },
-        "strip",
-        z.ZodTypeAny,
-        EaCCloudResourceDetails,
-        EaCCloudResourceDetails
-      >
-    >;
-  },
-  "strip",
-  z.ZodTypeAny,
-  EaCCloudResourceAsCode,
-  EaCCloudResourceAsCode
-> = EaCCloudWithResourcesSchema.extend({
-  ...EaCDetailsSchema.shape,
-  Details: EaCCloudResourceDetailsSchema.optional(),
-})
-  .strip()
+export const EaCCloudResourceAsCodeSchema: z.ZodType<EaCCloudResourceAsCode> = z
+  .intersection(
+    EaCCloudWithResourcesSchema,
+    z.object({
+      // bring in all of the standard EaCDetails fields
+      ...EaCDetailsSchema.shape,
+
+      // our typed details about order & type
+      Details: EaCCloudResourceDetailsSchema.optional(),
+
+      // now replace the loose mapping with real recursion
+      Resources: z
+        .lazy(() => z.record(EaCCloudResourceAsCodeSchema))
+        .optional()
+        .describe("Optional mapping of nested cloud resources."),
+    }),
+  )
   .describe(
     "Schema for cloud resource in Everything-as-Code (EaC), supporting typed details and recursive resource structures.",
   );

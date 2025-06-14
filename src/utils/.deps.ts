@@ -5,8 +5,8 @@ export { merge } from "jsr:@fathym/common@0.2.261";
 export { djwt } from "jsr:@fathym/common@0.2.261/jwt";
 export { getPackageLogger } from "jsr:@fathym/common@0.2.261/log";
 
-export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.110";
-export type { EaCActuatorCheckRequest } from "jsr:@fathym/eac@0.2.110/steward/actuators";
+export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.111";
+export type { EaCActuatorCheckRequest } from "jsr:@fathym/eac@0.2.111/steward/actuators";
 
 export { kebabCase } from "jsr:@luca/cases@1.0.0";
 
