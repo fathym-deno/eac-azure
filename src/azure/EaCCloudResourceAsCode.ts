@@ -25,10 +25,12 @@ export type EaCCloudResourceAsCode =
  * 2. Merge in EaCDetails + EaCCloudResourceDetails
  * 3. Override Resources with a true recursive definition
  */
-export const EaCCloudResourceAsCodeSchema: z.ZodType<EaCCloudResourceAsCode> = z
-  .intersection(
-    EaCCloudWithResourcesSchema,
-    z.object({
+export const EaCCloudResourceAsCodeSchema: z.ZodType<EaCCloudResourceAsCode> =
+  // z;
+  // .intersection(
+  // EaCCloudWithResourcesSchema,
+  z
+    .object({
       // bring in all of the standard EaCDetails fields
       ...EaCDetailsSchema.shape,
 
@@ -40,11 +42,11 @@ export const EaCCloudResourceAsCodeSchema: z.ZodType<EaCCloudResourceAsCode> = z
         .lazy(() => z.record(EaCCloudResourceAsCodeSchema))
         .optional()
         .describe("Optional mapping of nested cloud resources."),
-    }),
-  )
-  .describe(
-    "Schema for cloud resource in Everything-as-Code (EaC), supporting typed details and recursive resource structures.",
-  );
+    })
+    // )
+    .describe(
+      "Schema for cloud resource in Everything-as-Code (EaC), supporting typed details and recursive resource structures.",
+    );
 
 /**
  * Type guard for `EaCCloudResourceAsCode`.
