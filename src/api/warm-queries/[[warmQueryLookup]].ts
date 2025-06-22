@@ -1,3 +1,4 @@
+import { NullableArrayOrObject } from "jsr:@fathym/common@0.2.184";
 import {
   EaCRuntimeHandlers,
   EaCStewardAPIState,
@@ -170,7 +171,7 @@ export default {
 
     // Commit the delete
     const commitResp = await eacSvc.EaC.Delete(
-      eacDeletePayload as unknown as any,
+      eacDeletePayload as unknown as NullableArrayOrObject<EverythingAsCode>,
       false,
       60,
     );
