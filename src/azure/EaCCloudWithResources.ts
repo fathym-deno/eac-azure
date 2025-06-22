@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { z } from "./.deps.ts";
 import {
   EaCCloudResourceAsCode,
@@ -19,7 +18,9 @@ export type EaCCloudWithResources = {
  */
 export const EaCCloudWithResourcesSchema: z.ZodObject<
   {
-    Resources: z.ZodOptional<z.ZodLazy<z.ZodRecord<z.ZodString, any>>>;
+    Resources: z.ZodOptional<
+      z.ZodLazy<z.ZodRecord<z.ZodString, typeof EaCCloudResourceAsCodeSchema>>
+    >;
   },
   "strip",
   z.ZodTypeAny,
@@ -28,10 +29,7 @@ export const EaCCloudWithResourcesSchema: z.ZodObject<
 > = z
   .object({
     Resources: z
-      .lazy(
-        (): z.ZodRecord<z.ZodString, any> =>
-          z.record(EaCCloudResourceAsCodeSchema),
-      )
+      .lazy(() => z.record(EaCCloudResourceAsCodeSchema))
       .optional()
       .describe("Optional mapping of nested cloud resources."),
   })
