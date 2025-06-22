@@ -7,10 +7,10 @@ import { EaCVertexDetails, EaCVertexDetailsSchema, z } from "./.deps.ts";
  */
 export type EaCWarmQueryDetails = {
   /** Numeric version of this warm query (used for evolution or tracking). */
-  Version: number;
+  Version?: number;
 
   /** Raw query body or expression to be pre-evaluated. */
-  Query: string;
+  Query?: string;
 } & EaCVertexDetails;
 
 /**
@@ -19,8 +19,8 @@ export type EaCWarmQueryDetails = {
  */
 export const EaCWarmQueryDetailsSchema: z.ZodType<EaCWarmQueryDetails> =
   EaCVertexDetailsSchema.extend({
-    Version: z.number().describe("Numeric version for this warm query."),
-    Query: z.string().describe("Precomputed query logic or raw body."),
+    Version: z.number().optional().describe("Numeric version for this warm query."),
+    Query: z.string().optional().describe("Precomputed query logic or raw body."),
   }).describe(
     "Schema for warm query configuration details in Everything-as-Code.",
   );
