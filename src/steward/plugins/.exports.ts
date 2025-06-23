@@ -6,3 +6,6 @@ export const EaCAzureCloudsStewardPlugin = EACSP;
 
 import EASSP from "./EaCAzureSecretsStewardPlugin.ts";
 export const EaCAzureSecretsStewardPlugin = EASSP;
+
+import EWQAP from "./EaCWarmQueryAPIPlugin.ts";
+export const EaCWarmQueryAPIPlugin = EWQAP;
