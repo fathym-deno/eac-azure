@@ -49,7 +49,7 @@ export default {
 
     const dataSetResp = await kustoClient.execute(
       db,
-      eac.WarmQueries![lookup].Details!.Query,
+      eac.WarmQueries![lookup].Details!.Query!,
     );
 
     return Response.json(JSON.stringify(dataSetResp));
