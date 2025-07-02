@@ -19,8 +19,12 @@ export type EaCWarmQueryDetails = {
  */
 export const EaCWarmQueryDetailsSchema: z.ZodType<EaCWarmQueryDetails> =
   EaCVertexDetailsSchema.extend({
-    Version: z.number().optional().describe("Numeric version for this warm query."),
-    Query: z.string().optional().describe("Precomputed query logic or raw body."),
+    Version: z.number().optional().describe(
+      "Numeric version for this warm query.",
+    ),
+    Query: z.string().optional().describe(
+      "Precomputed query logic or raw body.",
+    ),
   }).describe(
     "Schema for warm query configuration details in Everything-as-Code.",
   );

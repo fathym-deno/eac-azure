@@ -9,6 +9,6 @@ export * from "./eacGetSecrets.ts";
 export * from "./eacSetSecrets.ts";
 export * from "./flattenJson.ts";
 export * from "./key-vault.ts";
-// export * from "./kusto.ts";
+export * from "./kusto.ts";
 export * from "./loadAzureCloudCredentials.ts";
 export * from "./loadResoureTypeApiVersions.ts";

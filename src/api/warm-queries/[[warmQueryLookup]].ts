@@ -11,7 +11,6 @@ import { ExplorerRequest } from "../ExplorerRequest.ts";
 
 export default {
   async GET(req, ctx) {
-
     const entLookup = ctx.State.EnterpriseLookup;
 
     const eacSvc = await loadEaCStewardSvc(entLookup!, ctx.State.Username!);
@@ -35,38 +34,42 @@ export default {
       result = Object.entries(warmQueries)
         .filter(([key]) => key.split("|")[0] == lookup)
         .map(
-            ([key, value]) => ({
-              Name: value.Details!.Name,
-              Description: value.Details!.Description,
-              Version: value.Details!.Version,
-              Query: value.Details!.Query,
-            }));
+          ([key, value]) => ({
+            Name: value.Details!.Name,
+            Description: value.Details!.Description,
+            Version: value.Details!.Version,
+            Query: value.Details!.Query,
+          }),
+        );
     } else if (reqVersion) {
       // Return exact match lookup_version
       const specificKey = `${lookup}|${reqVersion}`;
       result = warmQueries[specificKey];
-      if (result)
+      if (result) {
         result = result.Details!;
+      }
     } else {
       // reqVersion is empty or null: find highest version
       const bestMatch = Object.entries(warmQueries)
         .filter(([key]) => key.split("|")[0] == lookup)
         .map(
-            ([key, value]) => ({
-              Name: value.Details!.Name,
-              Description: value.Details!.Description,
-              Version: value.Details!.Version,
-              Query: value.Details!.Query,
-            }))
+          ([key, value]) => ({
+            Name: value.Details!.Name,
+            Description: value.Details!.Description,
+            Version: value.Details!.Version,
+            Query: value.Details!.Query,
+          }),
+        )
         .sort((a, b) => b.Version - a.Version)[0];
 
       result = bestMatch;
     }
 
-    if (result)
-        return Response.json(result);
-    else
-        return Response.json({status: "Not Found"});
+    if (result) {
+      return Response.json(result);
+    } else {
+      return Response.json({ status: "Not Found" });
+    }
   },
   async POST(req, ctx) {
     //debugger;
