@@ -22,9 +22,15 @@ export type EaCWarmQueryDetails = {
  */
 export const EaCWarmQueryDetailsSchema: z.ZodType<EaCWarmQueryDetails> =
   EaCVertexDetailsSchema.extend({
-    Version: z.number().optional().describe("Numeric version for this warm query."),
-    Query: z.string().optional().describe("Precomputed query logic or raw body."),
-    ApiPath: z.string().optional().describe("Section of the URL path that will serve as an additional lookup.")
+    Version: z.number().optional().describe(
+      "Numeric version for this warm query.",
+    ),
+    Query: z.string().optional().describe(
+      "Precomputed query logic or raw body.",
+    ),
+    ApiPath: z.string().optional().describe(
+      "Section of the URL path that will serve as an additional lookup.",
+    ),
   }).describe(
     "Schema for warm query configuration details in Everything-as-Code.",
   );

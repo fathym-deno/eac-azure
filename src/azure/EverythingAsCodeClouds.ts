@@ -26,11 +26,9 @@ export type EverythingAsCodeClouds = {
  */
 export const EverythingAsCodeCloudsSchema: z.ZodObject<
   {
-    Clouds: z.ZodOptional<
-      z.ZodRecord<
-        z.ZodString,
-        z.ZodType<EaCCloudAsCode, z.ZodTypeDef, EaCCloudAsCode>
-      >
+    Clouds: z.ZodRecord<
+      z.ZodString,
+      z.ZodType<EaCCloudAsCode, z.ZodTypeDef, EaCCloudAsCode>
     >;
     Secrets: z.ZodOptional<
       z.ZodRecord<
@@ -53,7 +51,6 @@ export const EverythingAsCodeCloudsSchema: z.ZodObject<
   .object({
     Clouds: z
       .record(EaCCloudAsCodeSchema)
-      .optional()
       .describe("Cloud provider configurations keyed by ID or name."),
     Secrets: z
       .record(EaCSecretAsCodeSchema)
