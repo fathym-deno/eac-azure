@@ -155,7 +155,7 @@ export async function loadAzureCloudCredentials(
     };
   }
 
-  if ("Token" in cloud.Details && cloud.Details.Token) {
+  if ("Token" in cloud.Details! && cloud.Details!.Token) {
     return loadAzureCredentialsForToken(cloud.Details.Token as string);
   } else {
     const details = (await deconstructCloudDetailsSecrets(
