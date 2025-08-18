@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { z } from "./.deps.ts";
 import { EaCCloudAsCode, EaCCloudAsCodeSchema } from "./EaCCloudAsCode.ts";
 import { EaCSecretAsCode, EaCSecretAsCodeSchema } from "./EaCSecretAsCode.ts";
@@ -26,9 +27,11 @@ export type EverythingAsCodeClouds = {
  */
 export const EverythingAsCodeCloudsSchema: z.ZodObject<
   {
-    Clouds: z.ZodRecord<
-      z.ZodString,
-      z.ZodType<EaCCloudAsCode, z.ZodTypeDef, EaCCloudAsCode>
+    Clouds: z.ZodOptional<
+      z.ZodRecord<
+        z.ZodString,
+        z.ZodType<EaCCloudAsCode, z.ZodTypeDef, EaCCloudAsCode>
+      >
     >;
     Secrets: z.ZodOptional<
       z.ZodRecord<
@@ -51,6 +54,7 @@ export const EverythingAsCodeCloudsSchema: z.ZodObject<
   .object({
     Clouds: z
       .record(EaCCloudAsCodeSchema)
+      .optional()
       .describe("Cloud provider configurations keyed by ID or name."),
     Secrets: z
       .record(EaCSecretAsCodeSchema)
@@ -71,7 +75,11 @@ export const EverythingAsCodeCloudsSchema: z.ZodObject<
 export function isEverythingAsCodeClouds(
   value: unknown,
 ): value is EverythingAsCodeClouds {
-  return EverythingAsCodeCloudsSchema.safeParse(value).success;
+  if (EverythingAsCodeCloudsSchema.safeParse(value).success) {
+    return typeof (value as any).Clouds != "undefined";
+  } else {
+    return false;
+  }
 }
 
 /**
