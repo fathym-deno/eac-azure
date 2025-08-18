@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-explicit-
+// deno-lint-ignore-file no-explicit-any
 import { z } from "./.deps.ts";
 import { EaCCloudAsCode, EaCCloudAsCodeSchema } from "./EaCCloudAsCode.ts";
 import { EaCSecretAsCode, EaCSecretAsCodeSchema } from "./EaCSecretAsCode.ts";
