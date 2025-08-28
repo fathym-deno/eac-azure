@@ -5,4 +5,4 @@ export {
   EaCDetailsSchema,
   type EaCVertexDetails,
   EaCVertexDetailsSchema,
-} from "jsr:@fathym/eac@0.2.116";
+} from "jsr:@fathym/eac@0.2.119";
