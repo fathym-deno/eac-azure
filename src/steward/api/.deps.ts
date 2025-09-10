@@ -1,7 +1,7 @@
 export { merge } from "jsr:@fathym/common@0.2.266";
 
-export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.119";
-export { type EaCRuntimeHandlers } from "jsr:@fathym/eac@0.2.119/runtime/pipelines";
+export type { EverythingAsCode } from "jsr:@fathym/eac@0.2.120";
+export { type EaCRuntimeHandlers } from "jsr:@fathym/eac@0.2.120/runtime/pipelines";
 export type {
   EaCActuatorCheckRequest,
   EaCActuatorCheckResponse,
@@ -10,10 +10,10 @@ export type {
   EaCActuatorErrorResponse,
   EaCActuatorRequest,
   EaCActuatorResponse,
-} from "jsr:@fathym/eac@0.2.119/steward/actuators";
+} from "jsr:@fathym/eac@0.2.120/steward/actuators";
 
-export { resolveDynamicValues } from "jsr:@fathym/eac-applications@0.0.176/utils";
-export type { EaCStewardAPIState } from "jsr:@fathym/eac-applications@0.0.176/steward/api";
+export { resolveDynamicValues } from "jsr:@fathym/eac-applications@0.0.187/utils";
+export type { EaCStewardAPIState } from "jsr:@fathym/eac-applications@0.0.187/steward/api";
 
 export type { Deployment } from "npm:@azure/arm-resources@5.2.0";
 
