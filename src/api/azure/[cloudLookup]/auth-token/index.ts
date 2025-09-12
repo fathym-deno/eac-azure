@@ -8,7 +8,7 @@ import {
 
 export default {
   async GET(req, ctx) {
-    const entLookup = ctx.State.EnterpriseLookup;
+    const entLookup = ctx.State.EnterpriseLookup!;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 
@@ -18,7 +18,7 @@ export default {
       ",",
     );
 
-    const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username);
+    const eacSvc = await loadEaCStewardSvc(entLookup, ctx.State.Username!);
 
     const eac: EverythingAsCodeClouds = await eacSvc.EaC.Get();
 
