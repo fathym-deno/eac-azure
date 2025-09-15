@@ -14,12 +14,12 @@ export type {
   EaCApplicationAsCode,
   EaCProjectAsCode,
   EverythingAsCodeApplications,
-} from "jsr:@fathym/eac-applications@0.0.187";
-export type { EaCAPIProcessor } from "jsr:@fathym/eac-applications@0.0.187/processors";
+} from "jsr:@fathym/eac-applications@0.0.190";
+export type { EaCAPIProcessor } from "jsr:@fathym/eac-applications@0.0.190/processors";
 export {
   buildStewardApiPluginConfig,
   type EaCStewardPluginOptions,
-} from "jsr:@fathym/eac-applications@0.0.187/steward/plugins";
+} from "jsr:@fathym/eac-applications@0.0.190/steward/plugins";
 
 export type { EverythingAsCodeDenoKV } from "jsr:@fathym/eac-deno-kv@0.0.22";
 
