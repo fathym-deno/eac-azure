@@ -1,6 +1,6 @@
 import {
-  BillingAccount,
   BillingManagementClient,
+  type BillingProfile,
   EaCRuntimeHandlers,
   EaCStewardAPIState,
   loadAzureCredentialsForToken,
@@ -12,9 +12,12 @@ export default {
 
     const creds = await loadAzureCredentialsForToken(azureAccessToken);
 
-    const billingAccounts: BillingAccount[] = [];
+    const url = new URL(req.url);
+    const billingAccountName = url.searchParams.get("billingAccountName");
 
-    if (creds) {
+    const profiles: BillingProfile[] = [];
+
+    if (creds && billingAccountName) {
       try {
         const subscriptionId = "00000000-0000-0000-0000-000000000000";
 
@@ -23,19 +26,21 @@ export default {
           subscriptionId,
         );
 
-        const billingAccountsList = billingClient.billingAccounts.list();
+        const pager = billingClient.billingProfiles.listByBillingAccount(
+          billingAccountName,
+        );
 
-        for await (const billingAccount of billingAccountsList) {
-          billingAccounts.push(billingAccount);
+        for await (const p of pager) {
+          profiles.push(p as BillingProfile);
         }
       } catch (err) {
         ctx.Runtime.Logs.Package.error(
-          "There was an error loading the billing accounts.",
+          "There was an error loading the billing profiles.",
           err,
         );
       }
     }
 
-    return Response.json(billingAccounts);
+    return Response.json(profiles);
   },
 } as EaCRuntimeHandlers<EaCStewardAPIState>;

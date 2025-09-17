@@ -11,7 +11,11 @@ export type {
   TenantIdDescription,
 } from "npm:@azure/arm-subscriptions@5.1.0";
 
-export type { BillingAccount } from "npm:@azure/arm-billing@4.1.0";
+export type {
+  BillingAccount,
+  BillingProfile,
+  InvoiceSection,
+} from "npm:@azure/arm-billing@4.1.0";
 
 export type { EaCServiceDefinitions } from "../../azure/.exports.ts";
 

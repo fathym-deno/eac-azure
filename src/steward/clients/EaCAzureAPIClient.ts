@@ -1,8 +1,10 @@
 import {
   BillingAccount,
+  BillingProfile,
   EaCBaseClient,
   EaCServiceDefinitions,
   ExplorerRequest,
+  InvoiceSection,
   KustoResponseDataSet,
   Location,
   Subscription,
@@ -31,18 +33,41 @@ export class EaCAzureAPIClient extends EaCBaseClient {
       return await this.json(response);
     },
 
-    BillingScopes: async (
+    BillingProfiles: async (
       azureAccessToken: string,
-    ): Promise<Record<string, string>> => {
-      const response = await fetch(
-        this.loadClientUrl(`billing/scopes`),
-        {
-          method: "GET",
-          headers: this.loadHeaders({
-            "x-eac-azure-access-token": azureAccessToken,
-          }),
-        },
+      billingAccountName: string,
+    ): Promise<BillingProfile[]> => {
+      const u = this.loadClientUrl(
+        `billing/profiles?billingAccountName=${
+          encodeURIComponent(billingAccountName)
+        }`,
       );
+      const response = await fetch(u, {
+        method: "GET",
+        headers: this.loadHeaders({
+          "x-eac-azure-access-token": azureAccessToken,
+        }),
+      });
+
+      return await this.json(response);
+    },
+
+    BillingInvoiceSections: async (
+      azureAccessToken: string,
+      billingAccountName: string,
+      billingProfileName: string,
+    ): Promise<InvoiceSection[]> => {
+      const u = this.loadClientUrl(
+        `billing/invoice-sections?billingAccountName=${
+          encodeURIComponent(billingAccountName)
+        }&billingProfileName=${encodeURIComponent(billingProfileName)}`,
+      );
+      const response = await fetch(u, {
+        method: "GET",
+        headers: this.loadHeaders({
+          "x-eac-azure-access-token": azureAccessToken,
+        }),
+      });
 
       return await this.json(response);
     },

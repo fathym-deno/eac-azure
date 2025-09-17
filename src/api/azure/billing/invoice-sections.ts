@@ -1,8 +1,8 @@
 import {
-  BillingAccount,
   BillingManagementClient,
   EaCRuntimeHandlers,
   EaCStewardAPIState,
+  type InvoiceSection,
   loadAzureCredentialsForToken,
 } from "../../.deps.ts";
 
@@ -12,9 +12,13 @@ export default {
 
     const creds = await loadAzureCredentialsForToken(azureAccessToken);
 
-    const billingAccounts: BillingAccount[] = [];
+    const url = new URL(req.url);
+    const billingAccountName = url.searchParams.get("billingAccountName");
+    const billingProfileName = url.searchParams.get("billingProfileName");
 
-    if (creds) {
+    const sections: InvoiceSection[] = [];
+
+    if (creds && billingAccountName && billingProfileName) {
       try {
         const subscriptionId = "00000000-0000-0000-0000-000000000000";
 
@@ -23,19 +27,22 @@ export default {
           subscriptionId,
         );
 
-        const billingAccountsList = billingClient.billingAccounts.list();
+        const pager = billingClient.invoiceSections.listByBillingProfile(
+          billingAccountName,
+          billingProfileName,
+        );
 
-        for await (const billingAccount of billingAccountsList) {
-          billingAccounts.push(billingAccount);
+        for await (const s of pager) {
+          sections.push(s as InvoiceSection);
         }
       } catch (err) {
         ctx.Runtime.Logs.Package.error(
-          "There was an error loading the billing accounts.",
+          "There was an error loading the invoice sections.",
           err,
         );
       }
     }
 
-    return Response.json(billingAccounts);
+    return Response.json(sections);
   },
 } as EaCRuntimeHandlers<EaCStewardAPIState>;

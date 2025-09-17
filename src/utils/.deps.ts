@@ -40,6 +40,7 @@ export {
   type Application,
   type PasswordCredential,
   type ServicePrincipal,
+  type User,
 } from "npm:@microsoft/microsoft-graph-types@2.40.0";
 
 export type {

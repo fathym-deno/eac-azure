@@ -36,6 +36,8 @@ export {
 export {
   type BillingAccount,
   BillingManagementClient,
+  type BillingProfile,
+  type InvoiceSection,
 } from "npm:@azure/arm-billing@5.0.0";
 
 export {
