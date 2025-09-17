@@ -33,6 +33,7 @@ export {
   eacSetSecrets,
   ensureRoleAssignments,
   finalizeCloudDetails,
+  GraphPermissionError,
   loadAzureCloudCredentials,
   loadCloudResourceGroupsConnections,
   loadDeploymentDetails,

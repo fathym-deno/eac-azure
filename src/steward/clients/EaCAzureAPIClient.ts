@@ -31,6 +31,22 @@ export class EaCAzureAPIClient extends EaCBaseClient {
       return await this.json(response);
     },
 
+    BillingScopes: async (
+      azureAccessToken: string,
+    ): Promise<Record<string, string>> => {
+      const response = await fetch(
+        this.loadClientUrl(`billing/scopes`),
+        {
+          method: "GET",
+          headers: this.loadHeaders({
+            "x-eac-azure-access-token": azureAccessToken,
+          }),
+        },
+      );
+
+      return await this.json(response);
+    },
+
     Subscriptions: async (
       azureAccessToken: string,
     ): Promise<Subscription[]> => {

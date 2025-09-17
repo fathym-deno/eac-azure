@@ -12,6 +12,7 @@ import {
   EverythingAsCode,
   EverythingAsCodeClouds,
   finalizeCloudDetails,
+  GraphPermissionError,
   isEaCCloudAzureDetails,
   loadMainSecretClient,
 } from "../.deps.ts";
@@ -96,10 +97,26 @@ export default {
       logger.Package.error("There was an error starting the cloud deployments");
       logger.Package.error(err);
 
+      if (err instanceof GraphPermissionError) {
+        return Response.json({
+          HasError: true,
+          Messages: {
+            Error: err.message,
+            RequiredPermissions: err.requiredPermissions,
+            RequiredDirectoryRoles: err.requiredDirectoryRoles,
+            GraphError: err.graphError,
+          },
+        } as EaCActuatorErrorResponse);
+      }
+
+      const errorMessage = err instanceof Error
+        ? err.message
+        : JSON.stringify(err);
+
       return Response.json({
         HasError: true,
         Messages: {
-          Error: JSON.stringify(err),
+          Error: errorMessage,
         },
       } as EaCActuatorErrorResponse);
     }

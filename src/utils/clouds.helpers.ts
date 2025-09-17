@@ -37,21 +37,115 @@ import {
 } from "./loadAzureCloudCredentials.ts";
 import { loadResoureTypeApiVersions } from "./loadResoureTypeApiVersions.ts";
 
-class TokenProvider implements AuthenticationProvider {
+export class TokenProvider implements AuthenticationProvider {
   constructor(
     protected credential: TokenCredential,
     protected authenticationProviderOptions: AuthenticationProviderOptions,
   ) {}
 
   public async getAccessToken(): Promise<string> {
-    const creds = loadMainAzureCredentials();
+    const scopes = this.authenticationProviderOptions?.scopes ?? [
+      `https://graph.microsoft.com/.default`,
+    ];
 
-    const accessToken = await creds.getToken(
-      this.authenticationProviderOptions!.scopes!,
-    );
+    const accessToken = await this.credential.getToken(scopes);
+
+    if (!accessToken?.token) {
+      throw new Error(
+        "Failed to acquire Microsoft Graph access token with the provided credential.",
+      );
+    }
 
     return accessToken.token;
   }
+}
+
+const REQUIRED_GRAPH_PERMISSIONS = [
+  "Application.ReadWrite.All",
+];
+
+const REQUIRED_AZURE_AD_ROLES = [
+  "Application Administrator",
+  "Cloud Application Administrator",
+];
+
+export class GraphPermissionError extends Error {
+  public readonly requiredPermissions: string[];
+  public readonly requiredDirectoryRoles: string[];
+  public readonly graphError?: {
+    code?: string;
+    message?: string;
+    statusCode?: number;
+  };
+
+  constructor(
+    message: string,
+    requiredPermissions: string[],
+    requiredDirectoryRoles: string[],
+    graphError?: { code?: string; message?: string; statusCode?: number },
+  ) {
+    super(message);
+    this.name = "GraphPermissionError";
+    this.requiredPermissions = requiredPermissions;
+    this.requiredDirectoryRoles = requiredDirectoryRoles;
+    this.graphError = graphError;
+  }
+}
+
+export function mapGraphPermissionError(err: unknown):
+  | GraphPermissionError
+  | undefined {
+  if (!err || typeof err !== "object") {
+    return undefined;
+  }
+
+  const maybeError = err as {
+    statusCode?: number;
+    code?: string;
+    message?: string;
+    error?: { code?: string; message?: string };
+    body?: { error?: { code?: string; message?: string } };
+  };
+
+  const statusCode = typeof maybeError.statusCode === "number"
+    ? maybeError.statusCode
+    : undefined;
+
+  const code = maybeError.code ??
+    maybeError.error?.code ??
+    maybeError.body?.error?.code;
+
+  const message = maybeError.message ??
+    maybeError.error?.message ??
+    maybeError.body?.error?.message;
+
+  const normalizedMessage = typeof message === "string" ? message : undefined;
+  const normalizedCode = typeof code === "string"
+    ? code.toLowerCase()
+    : undefined;
+
+  const insufficient = statusCode === 403 ||
+    normalizedCode === "authorization_requestdenied" ||
+    normalizedCode === "authentication_requestdenied" ||
+    normalizedCode === "accessdenied" ||
+    normalizedCode === "forbidden" ||
+    (normalizedMessage &&
+      normalizedMessage.toLowerCase().includes("insufficient privileges"));
+
+  if (!insufficient) {
+    return undefined;
+  }
+
+  return new GraphPermissionError(
+    "Insufficient Microsoft Graph permissions to configure the Azure cloud.",
+    REQUIRED_GRAPH_PERMISSIONS,
+    REQUIRED_AZURE_AD_ROLES,
+    {
+      code,
+      message: normalizedMessage,
+      statusCode,
+    },
+  );
 }
 
 export async function getCurrentAzureUser(accessToken: string): Promise<any> {
@@ -61,9 +155,10 @@ export async function getCurrentAzureUser(accessToken: string): Promise<any> {
   const graphClient = GraphClient.initWithMiddleware({
     authProvider: new TokenProvider(
       {
-        getToken: () => {
+        getToken: (_scopes) => {
           return Promise.resolve({
             token: accessToken,
+            expiresOnTimestamp: Date.now() + 5 * 60 * 1000,
           } as AccessToken);
         },
       } as TokenCredential,
@@ -88,158 +183,209 @@ export async function finalizeCloudDetails(
   commitId: string,
   cloud: EaCCloudAsCode,
 ): Promise<void> {
-  if (cloud.Details) {
-    logger.debug(`Finalizing EaC commit ${commitId} Cloud details`);
+  if (!cloud.Details) {
+    cloud.Token = "";
 
-    const details = cloud.Details as EaCCloudAzureDetails;
+    return;
+  }
 
-    if (cloud.Token) {
-      const creds = await loadAzureCloudCredentials(cloud);
+  logger.debug(`Finalizing EaC commit ${commitId} Cloud details`);
 
-      const subClient = new SubscriptionClient(creds);
+  const details = cloud.Details as EaCCloudAzureDetails;
 
-      const graphClient = GraphClient.initWithMiddleware({
-        authProvider: new TokenProvider(
-          {
-            getToken: () => {
-              return cloud.Token;
-            },
-          } as TokenCredential,
-          {
-            scopes: [`https://graph.microsoft.com/.default`], //"Application.Read.All"],
-          },
-        ),
-      });
+  const usingUserToken = Boolean(cloud.Token);
+  const userToken = usingUserToken ? (cloud.Token as string) : undefined;
 
-      const [_, payload] = await djwt.decode(cloud.Token as string);
+  const managedCredential = loadMainAzureCredentials();
 
-      if (!details.TenantID) {
-        details.TenantID ??= (payload as any).tid;
+  const resourceCredential = usingUserToken
+    ? await loadAzureCloudCredentials(cloud)
+    : managedCredential;
+
+  const graphCredential: TokenCredential = usingUserToken
+    ? {
+      getToken: (_scopes) =>
+        Promise.resolve({
+          token: userToken!,
+          expiresOnTimestamp: Date.now() + 5 * 60 * 1000,
+        } as AccessToken),
+    } as TokenCredential
+    : managedCredential;
+
+  const graphClient = GraphClient.initWithMiddleware({
+    authProvider: new TokenProvider(graphCredential, {
+      scopes: [`https://graph.microsoft.com/.default`],
+    }),
+  });
+
+  const subClient = new SubscriptionClient(resourceCredential);
+
+  try {
+    let tokenPayload: Record<string, unknown> | undefined;
+
+    if (usingUserToken && userToken) {
+      const [_, payload] = await djwt.decode(userToken);
+
+      tokenPayload = payload as Record<string, unknown>;
+
+      if (!details.TenantID && tokenPayload?.tid) {
+        details.TenantID = tokenPayload.tid as string;
       }
+    } else if (!usingUserToken && !details.TenantID) {
+      const managedTenantId = Deno.env.get("AZURE_TENANT_ID");
 
-      if (!details.SubscriptionID) {
-        // && !details.TenantID) {
-        const createResp = await subClient.alias.beginCreateAndWait(
-          crypto.randomUUID(),
-          {
-            properties: {
-              displayName: details.Name as string,
-              workload: details.IsDev ? "DevTest" : "Production",
-              billingScope: details.BillingScope as string,
-              additionalProperties: {
-                subscriptionTenantId: details.TenantID as string,
-                subscriptionOwnerId: (payload as any).oid,
-              },
-            },
-          },
-        );
-
-        details.SubscriptionID = createResp.properties?.subscriptionId!;
-
-        delete details.AgreementType;
-        delete details.BillingScope;
-        delete details.IsDev;
-      }
-
-      if (details.SubscriptionID && !details.Name) {
-        const sub = await subClient.subscriptions.get(details.SubscriptionID);
-
-        details.Name = sub.displayName;
-
-        details.Description ??= sub.displayName;
-      }
-
-      if (
-        details.SubscriptionID &&
-        details.TenantID &&
-        !details.ApplicationID
-      ) {
-        const appName =
-          `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
-
-        const appRes: { value: Application[] } = await graphClient
-          .api("/applications")
-          .filter(`displayName eq '${appName}'`)
-          .get();
-
-        let app = appRes.value[0];
-
-        if (!app) {
-          app = {
-            displayName: appName,
-            description: details.Description,
-          };
-        }
-
-        // TODO(mcgear): Ensure only a single application is create per some context, retreive existing and update it if necessary... Or...
-        app = await graphClient.api("/applications").post(app);
-
-        details.ApplicationID = app.appId!;
-      }
-
-      if (
-        details.SubscriptionID &&
-        details.TenantID &&
-        details.ApplicationID &&
-        !details.AuthKey
-      ) {
-        const appName =
-          `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
-
-        const spRes: { value: ServicePrincipal[] } = await graphClient
-          .api("/servicePrincipals")
-          .filter(`appId eq '${details.ApplicationID}'`)
-          .filter(`displayName eq '${appName}'`)
-          .get();
-
-        let svcPrincipal = spRes.value[0];
-
-        if (!svcPrincipal) {
-          svcPrincipal = {
-            appId: details.ApplicationID,
-            displayName: appName,
-            description: details.Description,
-          };
-        }
-
-        // TODO(mcgear): Ensure only a single svc principal is create per some context, retreive existing and update it if necessary... Or...
-        svcPrincipal = await graphClient
-          .api("/servicePrincipals")
-          .post(svcPrincipal);
-
-        details.ID = svcPrincipal.id!;
-
-        const spPassword: PasswordCredential = await graphClient
-          .api(`/servicePrincipals/${details.ID}/addPassword`)
-          .post({
-            displayName: `${details.Name} Password`,
-          } as PasswordCredential);
-
-        details.AuthKey = spPassword.secretText!;
-
-        const scope = `/subscriptions/${details.SubscriptionID}`;
-
-        await ensureRoleAssignments(creds, details.SubscriptionID, [
-          {
-            Scope: scope,
-            PrincipalID: details.ID,
-            PrincipalType: "ServicePrincipal",
-            // Owner - https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-            RoleDefinitionID: "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
-          },
-        ]);
-      }
-
-      if (!details.ID && details.ApplicationID) {
-        const svcPrinc = await graphClient
-          .api("/servicePrincipals")
-          .filter(`appId eq '${details.ApplicationID}'`)
-          .select(["id"])
-          .get();
-
-        details.ID = svcPrinc.value[0].id;
+      if (managedTenantId) {
+        details.TenantID = managedTenantId;
       }
     }
+
+    if (!details.SubscriptionID && details.BillingScope) {
+      const aliasProperties: Record<string, unknown> = {
+        displayName: (details.Name as string) ?? `Managed ${cloudLookup}`,
+        workload: details.IsDev ? "DevTest" : "Production",
+        billingScope: details.BillingScope as string,
+      };
+
+      const aliasAdditional: Record<string, unknown> = {};
+
+      if (details.TenantID) {
+        aliasAdditional.subscriptionTenantId = details.TenantID;
+      }
+
+      const managedOwnerId = Deno.env.get(
+        "AZURE_MANAGED_SUBSCRIPTION_OWNER_ID",
+      );
+      const ownerId = usingUserToken
+        ? (tokenPayload as Record<string, unknown> | undefined)?.oid
+        : managedOwnerId;
+
+      if (ownerId) {
+        aliasAdditional.subscriptionOwnerId = ownerId;
+      }
+
+      if (Object.keys(aliasAdditional).length) {
+        aliasProperties.additionalProperties = aliasAdditional;
+      }
+
+      const createResp = await subClient.alias.beginCreateAndWait(
+        crypto.randomUUID(),
+        {
+          properties: aliasProperties,
+        },
+      );
+
+      details.SubscriptionID = createResp.properties?.subscriptionId!;
+
+      delete (details as Record<string, unknown>).AgreementType;
+      delete (details as Record<string, unknown>).BillingScope;
+      delete (details as Record<string, unknown>).IsDev;
+    }
+
+    if (details.SubscriptionID && !details.Name) {
+      const sub = await subClient.subscriptions.get(details.SubscriptionID);
+
+      details.Name = sub.displayName;
+
+      details.Description ??= sub.displayName;
+    }
+
+    if (
+      details.SubscriptionID &&
+      details.TenantID &&
+      !details.ApplicationID
+    ) {
+      const appName =
+        `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
+
+      const appRes: { value: Application[] } = await graphClient
+        .api("/applications")
+        .filter(`displayName eq '${appName}'`)
+        .get();
+
+      let app = appRes.value[0];
+
+      if (!app) {
+        app = {
+          displayName: appName,
+          description: details.Description,
+        };
+      }
+
+      app = await graphClient.api("/applications").post(app);
+
+      details.ApplicationID = app.appId!;
+    }
+
+    if (
+      details.SubscriptionID &&
+      details.TenantID &&
+      details.ApplicationID &&
+      !details.AuthKey
+    ) {
+      const appName =
+        `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
+
+      const spRes: { value: ServicePrincipal[] } = await graphClient
+        .api("/servicePrincipals")
+        .filter(`appId eq '${details.ApplicationID}'`)
+        .filter(`displayName eq '${appName}'`)
+        .get();
+
+      let svcPrincipal = spRes.value[0];
+
+      if (!svcPrincipal) {
+        svcPrincipal = {
+          appId: details.ApplicationID,
+          displayName: appName,
+          description: details.Description,
+        };
+      }
+
+      svcPrincipal = await graphClient
+        .api("/servicePrincipals")
+        .post(svcPrincipal);
+
+      details.ID = svcPrincipal.id!;
+
+      const spPassword: PasswordCredential = await graphClient
+        .api(`/servicePrincipals/${details.ID}/addPassword`)
+        .post({
+          displayName: `${details.Name} Password`,
+        } as PasswordCredential);
+
+      details.AuthKey = spPassword.secretText!;
+
+      const scope = `/subscriptions/${details.SubscriptionID}`;
+
+      await ensureRoleAssignments(resourceCredential, details.SubscriptionID, [
+        {
+          Scope: scope,
+          PrincipalID: details.ID,
+          PrincipalType: "ServicePrincipal",
+          RoleDefinitionID: "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        },
+      ]);
+    }
+
+    if (!details.ID && details.ApplicationID) {
+      const svcPrinc = await graphClient
+        .api("/servicePrincipals")
+        .filter(`appId eq '${details.ApplicationID}'`)
+        .select(["id"])
+        .get();
+
+      details.ID = svcPrinc.value[0].id;
+    }
+  } catch (err) {
+    if (usingUserToken) {
+      const permissionError = mapGraphPermissionError(err);
+
+      if (permissionError) {
+        throw permissionError;
+      }
+    }
+
+    throw err;
   }
 
   cloud.Token = "";
