@@ -1,4 +1,4 @@
-﻿import {
+import {
   type AccessToken,
   type Application,
   djwt,
@@ -7,8 +7,8 @@
   GraphClient,
   type Logger,
   type PasswordCredential,
-  type ServicePrincipal,
   ResourceManagementClient,
+  type ServicePrincipal,
   SubscriptionClient,
   type TokenCredential,
 } from "../.deps.ts";
@@ -164,7 +164,8 @@ export async function finalizeCloudDetails(
           resourceCredential,
           details.SubscriptionID,
         );
-        const existing = await resourceClient.tags.getAtScope(scope).catch(() => undefined);
+        const existing = await resourceClient.tagsOperations.getAtScope(scope)
+          .catch(() => undefined);
         const currentTags = {
           ...(existing?.properties?.tags ?? {}),
         } as Record<string, string>;
@@ -174,10 +175,12 @@ export async function finalizeCloudDetails(
           ? nameCandidate
           : fallbackTagValue;
         if (!desiredTagValue) {
-          logger.debug(`Skipping WorkspaceLookup tag on subscription ${details.SubscriptionID} because no value was provided.`);
+          logger.debug(
+            `Skipping WorkspaceLookup tag on subscription ${details.SubscriptionID} because no value was provided.`,
+          );
         } else if (currentTags.WorkspaceLookup !== desiredTagValue) {
           currentTags.WorkspaceLookup = desiredTagValue;
-          await resourceClient.tags.createOrUpdateAtScope(scope, {
+          await resourceClient.tagsOperations.createOrUpdateAtScope(scope, {
             properties: { tags: currentTags },
           });
         }
@@ -268,9 +271,3 @@ export async function finalizeCloudDetails(
 
   cloud.Token = "";
 }
-
-
-
-
-
-

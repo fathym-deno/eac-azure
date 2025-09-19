@@ -41,7 +41,6 @@ export default {
       const current = currentClouds[cloudLookup] || {};
 
       const cloud = handlerRequest.Model as EaCCloudAsCode;
-      debugger;
 
       await finalizeCloudDetails(
         logger.Package,
