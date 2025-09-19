@@ -1,4 +1,4 @@
-import {
+﻿import {
   type AccessToken,
   type Application,
   djwt,
@@ -8,6 +8,7 @@ import {
   type Logger,
   type PasswordCredential,
   type ServicePrincipal,
+  ResourceManagementClient,
   SubscriptionClient,
   type TokenCredential,
 } from "../.deps.ts";
@@ -92,6 +93,23 @@ export async function finalizeCloudDetails(
       }
     }
 
+    if (!details.SubscriptionID) {
+      const desiredName = (details.Name && details.Name.trim().length > 0)
+        ? details.Name.trim()
+        : cloudLookup.trim();
+      for await (const sub of subClient.subscriptions.list()) {
+        const displayName = sub.displayName?.trim();
+        if (
+          displayName &&
+          displayName.toLowerCase() === desiredName.toLowerCase()
+        ) {
+          details.SubscriptionID = sub.subscriptionId!;
+          details.Name ??= displayName;
+          details.Description ??= displayName;
+          break;
+        }
+      }
+    }
     if (!details.SubscriptionID && details.BillingScope) {
       const aliasProperties: Record<string, unknown> = {
         displayName: (details.Name as string) ?? `Managed ${cloudLookup}`,
@@ -138,6 +156,40 @@ export async function finalizeCloudDetails(
       details.Description ??= sub.displayName;
     }
 
+    // Ensure the subscription keeps a WorkspaceLookup tag for traceability.
+    if (details.SubscriptionID) {
+      const scope = `/subscriptions/${details.SubscriptionID}`;
+      try {
+        const resourceClient = new ResourceManagementClient(
+          resourceCredential,
+          details.SubscriptionID,
+        );
+        const existing = await resourceClient.tags.getAtScope(scope).catch(() => undefined);
+        const currentTags = {
+          ...(existing?.properties?.tags ?? {}),
+        } as Record<string, string>;
+        const nameCandidate = details.Name?.trim();
+        const fallbackTagValue = cloudLookup.trim() || cloudLookup;
+        const desiredTagValue = nameCandidate && nameCandidate.length > 0
+          ? nameCandidate
+          : fallbackTagValue;
+        if (!desiredTagValue) {
+          logger.debug(`Skipping WorkspaceLookup tag on subscription ${details.SubscriptionID} because no value was provided.`);
+        } else if (currentTags.WorkspaceLookup !== desiredTagValue) {
+          currentTags.WorkspaceLookup = desiredTagValue;
+          await resourceClient.tags.createOrUpdateAtScope(scope, {
+            properties: { tags: currentTags },
+          });
+        }
+      } catch (tagErr) {
+        logger.debug(
+          `Unable to set WorkspaceLookup tag on subscription ${details.SubscriptionID}: ${
+            tagErr instanceof Error ? tagErr.message : String(tagErr)
+          }`,
+        );
+      }
+    }
+
     if (details.SubscriptionID && details.TenantID && !details.ApplicationID) {
       const appName =
         `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
@@ -147,14 +199,11 @@ export async function finalizeCloudDetails(
         .filter(`displayName eq '${appName}'`)
         .get();
 
-      let app = appRes.value[0];
-      if (!app) {
-        app = {
-          displayName: appName,
-          description: details.Description,
-        } as Application;
-      }
-      app = await graphClient.api("/applications").post(app);
+      const existingApp = appRes.value[0];
+      const app = existingApp ?? await graphClient.api("/applications").post({
+        displayName: appName,
+        description: details.Description,
+      } as Application);
       details.ApplicationID = app.appId!;
     }
 
@@ -173,15 +222,12 @@ export async function finalizeCloudDetails(
 
       let svcPrincipal = spRes.value[0];
       if (!svcPrincipal) {
-        svcPrincipal = {
+        svcPrincipal = await graphClient.api("/servicePrincipals").post({
           appId: details.ApplicationID,
           displayName: appName,
           description: details.Description,
-        } as unknown as ServicePrincipal;
+        } as unknown as ServicePrincipal);
       }
-      svcPrincipal = await graphClient.api("/servicePrincipals").post(
-        svcPrincipal,
-      );
       details.ID = svcPrincipal.id!;
 
       const spPassword: PasswordCredential = await graphClient
@@ -222,3 +268,9 @@ export async function finalizeCloudDetails(
 
   cloud.Token = "";
 }
+
+
+
+
+
+

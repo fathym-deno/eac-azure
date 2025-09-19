@@ -11,6 +11,7 @@ import { EaCCloudActuatorCheckRequest } from "../EaCCloudActuatorCheckRequest.ts
 
 export default {
   async POST(req, ctx) {
+    debugger;
     const logger = ctx.Runtime.Logs;
 
     // const username = ctx.state.Username;
