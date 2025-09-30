@@ -1,4 +1,4 @@
-import { NullableArrayOrObject } from "jsr:@fathym/common@0.2.184";
+import { NullableArrayOrObject } from "jsr:@fathym/common@0.2.273";
 import {
   EaCRuntimeHandlers,
   EaCStewardAPIState,
